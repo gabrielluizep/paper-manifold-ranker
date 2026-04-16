@@ -8,6 +8,29 @@
 - Devido aos dados e à forma como é construido aglomera maior parte do valor em uma faixa estreita, o que torna dificil a distinção e assim o uso para classificação das cidades.
 - Nós propomos um modelo autosupervisionado de GNN LTR baseado em competição que compara em pares todas as cidades e regride um escore para cada entidade municipio--periodo
 
+
+{ PAULO
+motivação\\
+o ranqueamento é difícil por questão do contexto e das diferentes dimensões de análise\\
+o ranqueamento é útil para comparações técnicas, econômicas e diagnósticas\\
+
+as técnicas de ranqueamento em problemas multi-dimensionais são difíceis porque os problemas possuem váriaRas dimensões de análise\\
+
+por que exatamente a existência de problemas multi-objetivo de otimização torna o problema de otimização mais complexo?\\
+
+como Pareto entra para resolver esse tipo de questão\\
+
+POr que são problemas   ?\\
+
+Explicar como os nossos custos exploram os aspectos do problema e cobrem diferentes perspectivas de otimização e contribuem a uma solução mais balanceada e mais "ótima".\\
+
+Resultados de como o nosso esquema de otimização contribui para um cenário de otimização melhorado em face a otimizações sobre variáveis escalares (otimização unidimensional). 
+
+Demonstrar que esse tipo de análise aumenta o range para variáveis alvo e como faz isso\\
+
+Demonstrar ablações para demonstrar que o uso da técnica de fato gera bons resultados e que não é mera aleatoriedade.
+}
+
 # Dataset 
 
 - Para classificação das entidades municipio--periodo utilizamos dados de QoS como {lista de INDs}

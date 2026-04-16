@@ -29,7 +29,7 @@
 ]
 
 % ---------- Nodes (left to right) ----------
-\node (X) {$\mathbf{X}$};
+\node (X) {$\mathbf{X}^\mathrm{raw}$};
 
 \node[block, right=1.5cm of X] (pre) {Data\\preprocessing};
 
@@ -39,20 +39,20 @@
 
 \node[block, right=1.8cm of pos] (model) {Model};
 
-\node[right=1.5cm of model] (s) {$\mathbf{s}$};
+\node[right=1.5cm of model] (s) {$s_i$};
 
 % ---------- Main pipeline arrows ----------
 \draw[arrow] (X)     -- (pre);
-\draw[arrow] (pre)   -- node[label] {$\mathbf{X}^{model}$} (graph);
-\draw[arrow] (graph) -- (pos);
-\draw[arrow] (pos)   -- (model);
+\draw[arrow] (pre)   -- node[label] {$\mathbf{X}^\mathrm{model}$} (graph);
+\draw[arrow] (graph) -- node[label] {$\{\mathbf{X}^\mathrm{model},\mathbf{A}\}$} (pos);
+\draw[arrow] (pos)   -- node[label] {$[\mathbf{x}^\mathrm{model}_i \mid \mathbf{p}_i]$}(model);
 \draw[arrow] (model) -- (s);
 
 % ---------- Dashed bypass arrow (pre → model, below) ----------
 \draw[arrow, dashed, rounded corners=8pt]
     (pre.south)
     -- ++(0, -1.2)
-    -| node[font=\footnotesize, pos=0.25, below] {$\mathbf{X}^{pareto}$}
+    -| node[font=\footnotesize, pos=0.25, below] {$\mathbf{X}^\mathrm{pareto}$}
     (model.south);
 
 \end{tikzpicture}
