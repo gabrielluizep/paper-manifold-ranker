@@ -1,0 +1,267 @@
+
+%% ------------- English version ---------------
+\documentclass[english]{sbrt}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[acronym]{glossaries}
+
+\newtheorem{theorem}{Theorem}
+
+\usepackage{booktabs}
+\usepackage{subcaption}
+\usepackage{amsfonts}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{
+    positioning,   % para "below=of", "right=of"
+    arrows.meta,   % setas mais modernas
+    shapes.geometric, % blocos (rectangle, rounded corners)
+    calc           % pequenas operações de coordenadas (boa prática incluir)
+}
+%% ---------------------------------------------
+
+\begin{document}
+
+\input{acronyms}
+
+\title{Eixo 1}
+
+\author{Gabriel Luiz Espindola Pedro, Paulo Ricardo Branco da Silva, \\ Dimas Irion Alves, \textcolor{red}{and Anatel authors}
+\thanks{Gabriel Luiz Espindola Pedro, Paulo Ricardo Branco da Silva, and Dimas Irion Alves are with Telecommunications Department of Aeronautics Institute of Technology, São José dos Campos, SP, Brazil, e-mails: \{gabrielluizep, pbranco, dimasirion\}@ita.br; \textcolor{red}{Anatel authors are with Anatel e-mails: \{xxx, yyy\}@anatel.gov.br}. This study was financed in part by the Coordenação de Aperfeiçoamento de Pessoal de Nível Superior - Brasil (CAPES) – Finance Code  001, Anatel under Decentralized Execution Agreement (TED) No. 03/2023, Work Program: 24.722.2205.20ZD.0001, and São Paulo Research Foundation (FAPESP) under grant 2020/09838-0 (BIOS—Brazilian Institute of Data Science).}%
+}
+
+\maketitle
+
+\markboth{XLIV BRAZILIAN SYMPOSIUM ON TELECOMMUNICATIONS AND SIGNAL PROCESSING - SBrT 2026, SEPTEMBER 29--OCTOBER 02, 2026, SALVADOR, BA}{}
+
+
+\begin{abstract}
+Assessing the quality of telecommunications services across municipalities with heterogeneous structural, geographic, and socioeconomic conditions requires methodologies that go beyond simple weighted averages. This paper introduces a Graph Neural Network (GNN)-based manifold ranking framework that learns a latent representation of municipality-level telecom quality indicators and produces a unified ranking score. The proposed architecture employs Residual Graph Convolutional layers operating on a $k$-nearest-neighbor graph constructed from 18 infrastructure and quality-of-service indicators monitored by the Brazilian National Telecommunications Agency (ANATEL). The model is trained with a multi-objective loss function that simultaneously enforces pairwise ranking consistency, input reconstruction fidelity, geometric smoothness on the learned manifold, and directional alignment with domain knowledge. A monotonicity constraint is imposed on the scoring head to guarantee that improvements in underlying indicators always translate into higher scores. We validate the approach on a longitudinal dataset covering 4,088 Brazilian municipalities over 30 monthly periods (July 2022--December 2024), totaling over 82,000 municipality--period observations. Ablation studies across six experimental configurations demonstrate the contribution of each loss component. Temporal stability analyses via spaghetti plots reveal that the manifold ranker produces smoother and more consistent rankings than the regulatory baseline (IQS), while geographic visualizations confirm alignment with known infrastructure patterns. The framework provides a principled, data-driven alternative to expert-defined composite indices for regulatory quality assessment at national scale.
+\end{abstract}
+
+\begin{keywords}
+Learn to Rank (LTR), Manifold Learning, Pareto Optimization, Multi Objective Optimization, Quality of Service (QoS)
+\end{keywords}
+
+
+\section{Introduction}
+
+% adicionar motivação forte
+Queremos ranquear o servico de telecom dos municipios do brasil (porque?), isso é importante (porque?)
+
+\gls{anatel} \gls{rqual} established the \gls{iqs}, a linear combination of \gls{qos} indicators that summarizes the quality of service provisioning on a given municipality as way to estimate the overall service quality.
+% $\mathrm{IND}_1$ is the voice-call connection rate in the access network, $\mathrm{IND}_2$ the voice-call drop rate (complemented so that higher values
+% indicate fewer drops),
+% $\mathrm{IND}_3$ the data-connection rate measured in the access network, $\mathrm{IND}_4$ the download and upload speed compliance rate, 
+% $\mathrm{IND}_5$ the bidirectional data-connection latency (complemented so that lower latency corresponds to higher $\mathrm{IND}_5$), 
+% $\mathrm{IND}_6$ the data-connection latency variation, i.e., jitter (complemented analogously), 
+% $\mathrm{IND}_7$ the data-connection packet-loss rate (complemented so that lower loss corresponds to higher $\mathrm{IND}_7$), 
+% and $\mathrm{IND}_8$ the service availability rate.
+
+When we want to compare service quality across municipalities we face a problem, most of the \gls{iqs} values are grouped in a small group in the upper part of the support, making them indistinguishable one from another.
+
+As the assumption of equality of service provisioning in multiple municipality stands improbable given the number of variable composed of, sample noise, differences of infrastructure, geographical distribution, etc., we can assume that when comparing two municipalities we always have one better than another. By repeating this process of comparison, and using the underlying transitivity property, we can define a ranking of municipalities service quality.
+
+Given the problem, there is no such thing as ``better'' municipality, because the absence of labeling identifying the ordering between them we have to work with a auto-supervised model, where I find a way to understand in mid training if I'm converging to a solution that makes sense to my goal.
+
+To enable relevant comparison we have to represent the municipalities with some fit mathematical structure. Since we don't have a definition or examples of which municipalities are better than other, and by how much, we try to bring the municipality similarity by using the \gls{iqs} in a \gls{knn} graph, where we have  the edges between the municipalities $\mathcal{E}$ representing the similarity between them.
+
+Geometrically, we can understand this process of generating the \gls{knn} $\mathcal{E}$ graph as modeling of the manifold where the data lives in.
+
+
+
+
+
+% The study conducted on \cite{silva2026_qos_qoe_lin} shows that no linear model is suitable for \gls{qos}--\gls{qoe} predicition, hence
+
+
+
+
+The remainder of this work is presented as follows: Section \ref{sec:problem-setup} builds the intuition on the frameworks used; Section \ref{sec:manifold-ranker-model} [...]
+
+
+
+motivação\\
+o ranqueamento é difícil por questão do contexto e das diferentes dimensões de análise\\
+o ranqueamento é útil para comparações técnicas, econômicas e diagnósticas\\
+
+
+as técnicas de ranqueamento em problemas multi-dimensionais são difíceis porque os problemas possuem várias dimensões de análise\\
+
+por que exatamente a existência de problemas multi-objetivo de otimização torna o problema de otimização mais complexo?\\
+
+como Pareto entra para resolver esse tipo de questão\\
+
+POr que são problemas sem rotulamento?\\
+
+Explicar como os nossos custos exploram os aspectos do problema e cobrem diferentes perspectivas de otimização e contribuem a uma solução mais balanceada e mais "ótima".\\
+
+Resultados de como o nosso esquema de otimização contribui para um cenário de otimização melhorado em face a otimizações sobre variáveis escalares (otimização unidimensional). 
+
+Demonstrar que esse tipo de análise aumenta o range para variáveis alvo e como faz isso\\
+
+Demonstrar ablações para demonstrar que o uso da técnica de fato gera bons resultados e que não é mera aleatoriedade.
+
+\section{Preliminaries}
+
+% Pareto
+% Manifold
+% Grafo
+% Subsampling
+% Monotonicidade
+
+
+\section{Problem setup} \label{sec:problem-setup}
+
+\subsection{\gls{iqs}}
+
+\subsection{Graphs}
+
+\section{Dataset} \label{sec:dataset}
+
+The dataset is organized as a panel indexed by two keys: \textit{month}, which
+identifies the observation period, and \textit{municipality}, the official Brazilian
+Institute of Geography and Statistics (IBGE) numeric code that uniquely identifies
+each municipality. Each row therefore corresponds to one municipality--month pair.
+The feature columns fall into four groups. The first group contains coverage
+indicators: the 5G resident coverage variable reports the share of residents in the
+municipality covered by a 5G signal, normalized by the total resident population,
+while the 5G deployment indicator is a binary variable encoding whether 5G technology
+is available in the municipality. The second group consists of composite quality
+indices derived from the regulatory framework: $\mathrm{IBC}$ is the Index of
+Coverage Quality, $\mathrm{ISG}$ is the General Satisfaction Index, and
+$\mathrm{IQS}$ is the Quality of Service index, which aggregates the eight technical
+indicators into a single score. The third group comprises the eight individual QoS
+indicators defined under Anatel's RQUAL regulation~\cite{anatel2019rqual}, each
+normalized to $[0,1]$ with higher values denoting superior performance:
+$\mathrm{IND}_1$ (voice-call connection rate), $\mathrm{IND}_2$ (voice-call drop
+rate, complemented), $\mathrm{IND}_3$ (data-connection rate), $\mathrm{IND}_4$
+(download and upload speed compliance rate), $\mathrm{IND}_5$ (data-connection
+latency, complemented), $\mathrm{IND}_6$ (jitter, complemented), $\mathrm{IND}_7$
+(packet-loss rate, complemented), and $\mathrm{IND}_8$ (service availability rate).
+The fourth group contains throughput measurements collected through Anatel's INF4
+speed-testing infrastructure, reported separately by radio-access technology and
+direction: $\mathrm{INF4}_{\mathrm{DL},3\mathrm{G}}$,
+$\mathrm{INF4}_{\mathrm{DL},4\mathrm{G}}$, and
+$\mathrm{INF4}_{\mathrm{DL},5\mathrm{G}}$ record median download speeds over 3G, 4G,
+and 5G connections, respectively, while $\mathrm{INF4}_{\mathrm{UP},3\mathrm{G}}$,
+$\mathrm{INF4}_{\mathrm{UP},4\mathrm{G}}$, and $\mathrm{INF4}_{\mathrm{UP},5\mathrm{G}}$
+record the corresponding upload speeds.
+
+\subsection{Legacy IQS}
+
+The Anatel legacy composite, $\mathrm{QoS}_\mathrm{leg}$, aggregates the $K$ normalized
+technical quality-of-service indicators through a fixed regulator-defined convex
+combination,
+\begin{equation}
+    \mathrm{QoS}_\mathrm{leg} = y_{\max} \sum_{k=1}^{K} w_k^{\mathrm{leg}} \, \mathrm{IND}_k,
+    \label{eq:qos_leg}
+\end{equation}
+where $y_{\max} = 10$ is the upper bound of the user satisfaction scale, each
+$\mathrm{IND}_k \in [0,1]$ is a normalized technical indicator with higher values
+denoting superior performance, and the weight vector $w^{\mathrm{leg}} \in \Delta^{K-1}$
+lies on the probability simplex $\Delta^{K-1} = \{w \in \mathbb{R}^K : w_k \geq 0,\,
+\sum_k w_k = 1\}$. Under the legacy specification, the weights are fixed at
+$w^{\mathrm{leg}} = (0.1,\, 0.1,\, 0.1,\, 0.2,\, 0.1,\, 0.1,\, 0.1,\, 0.2)$,
+assigning greater relevance to $\mathrm{IND}_4$ (download and upload speed compliance
+rate) and $\mathrm{IND}_8$ (service availability rate), while distributing equal
+weight among the remaining indicators.
+
+
+\subsection{Revised IQS}
+
+The Anatel revised composite, $\mathrm{QoS}_\mathrm{rev}$, introduced in 2025 through
+the updated Reference Values Document (DVR)~\cite{dvr2025}, replaces the fixed weights
+with a performance-dependent scheme combined with a coverage bonus. The indicators are
+first ranked from worst-performing to best-performing within each municipality, and the
+weight assigned to rank position $r$ is
+\begin{equation}
+    \alpha_r = \frac{1}{r \, H_K},
+    \label{eq:alpha_r}
+\end{equation}
+where $H_K = \sum_{j=1}^{K} 1/j$ is the $K$-th harmonic number. The revised composite
+is then defined as
+\begin{equation}
+    \mathrm{QoS}_\mathrm{rev} = y_{\max} \sum_{r=1}^{K} \alpha_r \cdot \mathrm{IND}_{\pi(r)} + B_{\mathrm{cov}},
+    \label{eq:qos_rev}
+\end{equation}
+where $\pi$ is the permutation ordering indicators from worst to best performance, and
+$B_{\mathrm{cov}}$ is a coverage bonus corresponding to a fixed increment of five points,
+added whenever coverage with 4G or higher technology in the municipality's urban area
+reaches at least 95\%. When $B_{\mathrm{cov}} = 0$, the revised rule reduces to a linear
+function of the indicators; when $B_{\mathrm{cov}} \neq 0$, it becomes affine. The
+inverse-harmonic weighting assigns greater importance to the worst-performing indicators,
+penalizing municipalities with more critical technical dimensions, in contrast to the
+static weight distribution of the legacy composite.
+
+\section{Manifold Ranker Model} \label{sec:manifold-ranker-model}
+
+\subsection{Training Objectives and Loss Terms}
+
+\subsubsection{Pairwise Ranking Loss}
+
+\subsubsection{Reconstruction Loss}
+
+\subsubsection{Geometric Smoothness Loss}
+
+\subsubsection{Total Loss and Weighting}
+
+\begin{equation}
+    \small
+    \mathcal{L} = 
+    \lambda_\mathrm{rank} \mathcal{L}_\mathrm{rank} +
+    \lambda_\mathrm{recon} \mathcal{L}_\mathrm{recon} +
+    \lambda_\mathrm{geo} \mathcal{L}_\mathrm{geo} +
+    \lambda_\mathrm{compass} \mathcal{L}_\mathrm{compass}    
+\end{equation}
+
+\section{Results and Discussion}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=01\linewidth]{figures/hist_score_iqs.pdf}
+    \caption{Enter Caption}
+    \label{fig:placeholder}
+\end{figure}
+
+\begin{figure*}
+    \centering
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{map_score.pdf}
+        \caption{Manifold Ranker $s$}
+        \label{fig:map_score}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{map_iqs_old.pdf}
+        \caption{$\mathrm{QoS}_\mathrm{leg}$}
+        \label{fig:map_iqs_old}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{map_iqs_new.pdf}
+        \caption{$\mathrm{QoS}_\mathrm{rev}$}
+        \label{fig:map_iqs_new}
+    \end{subfigure}
+    
+    \caption{Enter Caption}
+    \label{fig:maps}
+\end{figure*}
+
+\input{tables/2024_12_top_20}
+
+\section{Conclusions}
+
+\section*{Acknowledgments}
+
+\bibliographystyle{IEEEtran} % até 12 refs
+\bibliography{references}
+
+% \appendix
+% Insert information about the appendix here
+
+\end{document}
+

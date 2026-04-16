@@ -1,0 +1,60 @@
+\documentclass[tikz, border=10pt]{standalone}
+
+\usepackage{amssymb}
+\usepackage{amsmath}
+
+\usepackage{tikz}
+\usetikzlibrary{
+    positioning,
+    arrows.meta,
+    shapes.geometric,
+    calc
+}
+
+\begin{document}
+
+\begin{tikzpicture}[
+    every node/.style={font=\small},
+    block/.style={
+        rectangle,
+        draw,
+        rounded corners=4pt,
+        align=center,
+        minimum height=1.2cm,
+        minimum width=2.8cm,
+        thick
+    },
+    arrow/.style={->, thick, >=stealth},
+    label/.style={font=\footnotesize, midway, above}
+]
+
+% ---------- Nodes (left to right) ----------
+\node (X) {$\mathbf{X}$};
+
+\node[block, right=1.5cm of X] (pre) {Data\\preprocessing};
+
+\node[block, right=1.8cm of pre] (graph) {Graph\\construction};
+
+\node[block, right=1.8cm of graph] (pos) {Positional\\Encoding};
+
+\node[block, right=1.8cm of pos] (model) {Model};
+
+\node[right=1.5cm of model] (s) {$\mathbf{s}$};
+
+% ---------- Main pipeline arrows ----------
+\draw[arrow] (X)     -- (pre);
+\draw[arrow] (pre)   -- node[label] {$\mathbf{X}^{model}$} (graph);
+\draw[arrow] (graph) -- (pos);
+\draw[arrow] (pos)   -- (model);
+\draw[arrow] (model) -- (s);
+
+% ---------- Dashed bypass arrow (pre → model, below) ----------
+\draw[arrow, dashed, rounded corners=8pt]
+    (pre.south)
+    -- ++(0, -1.2)
+    -| node[font=\footnotesize, pos=0.25, below] {$\mathbf{X}^{pareto}$}
+    (model.south);
+
+\end{tikzpicture}
+
+\end{document}
