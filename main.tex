@@ -46,7 +46,7 @@
 
 
 \begin{abstract}
-% Assessing the quality of telecommunications services across municipalities with heterogeneous structural, geographic, and socioeconomic conditions requires methodologies that go beyond simple weighted averages. This paper introduces a Graph Neural Network (GNN)-based manifold ranking framework that learns a latent representation of municipality-level telecom quality indicators and produces a unified ranking score. The proposed architecture employs Residual Graph Convolutional layers operating on a $k$-nearest-neighbor graph constructed from 18 infrastructure and quality-of-service indicators monitored by the Brazilian National Telecommunications Agency (ANATEL). The model is trained with a multi-objective loss function that simultaneously enforces pairwise ranking consistency, input reconstruction fidelity, geometric smoothness on the learned manifold, and directional alignment with domain knowledge. A monotonicity constraint is imposed on the scoring head to guarantee that improvements in underlying indicators always translate into higher scores. We validate the approach on a longitudinal dataset covering 4,088 Brazilian municipalities over 30 monthly periods (July 2022--December 2024), totaling over 82,000 municipality--period observations. Ablation studies across six experimental configurations demonstrate the contribution of each loss component. Temporal stability analyses via spaghetti plots reveal that the manifold ranker produces smoother and more consistent rankings than the regulatory baseline (IQS), while geographic visualizations confirm alignment with known infrastructure patterns. The framework provides a principled, data-driven alternative to expert-defined composite indices for regulatory quality assessment at national scale.
+Assessing the quality of telecommunications services across municipalities with heterogeneous structural, geographic, and socioeconomic conditions requires methodologies that go beyond simple weighted averages. This paper introduces a Graph Neural Network (GNN)-based manifold ranking framework that learns a latent representation of municipality-level telecom quality indicators and produces a unified ranking score. The proposed architecture employs Residual Graph Convolutional layers operating on a $k$-nearest-neighbor graph constructed from 19 infrastructure and quality-of-service indicators monitored by the Brazilian National Telecommunications Agency (ANATEL). The model is trained with a multi-objective loss function that simultaneously enforces pairwise ranking consistency, input reconstruction fidelity, geometric smoothness on the learned manifold, and directional alignment with domain knowledge. A monotonicity constraint is imposed on the scoring head to guarantee that improvements in underlying indicators always translate into higher scores. We validate the approach on a longitudinal dataset covering 4,088 Brazilian municipalities over 30 monthly periods (July 2022--December 2024), totaling over 82,000 municipality--period observations. Ablation studies across six experimental configurations demonstrate the contribution of each loss component. Temporal stability analyses via spaghetti plots reveal that the manifold ranker produces smoother and more consistent rankings than the regulatory baseline (IQS), while geographic visualizations confirm alignment with known infrastructure patterns. The framework provides a principled, data-driven alternative to expert-defined composite indices for regulatory quality assessment at national scale.
 \end{abstract}
 
 \begin{keywords}
@@ -222,20 +222,65 @@ Most implementations of \gls{knn} algorithm traces the most nearest neighbor as 
 
 \subsection{Positional Encoding}
 
+Message-passing \gls{gnn}s inherently possess a permutation-invariance property, which implies that relabeling nodes does not change the resulting computations. Due to this characteristic, the network lacks a notion of global coordinates on the dataset manifold. To inject this structural awareness into the architecture, we utilize specific methods to extract positional encodings $p_i \in \mathbb{R}^{d_{pe}}$.
+
+To obtain these encodings we fall back to \gls{pca}, which finds the orthogonal directions of maximum variance and projects the data onto these principal components, generating a linear approximation of the manifold's global coordinates. Alternatively, Spectral Embedding could be used as a more robust mechanism for extracting non-linear coordinates when the graph dimension respects processing constraints.
+
+The computed features $p_i$ are subsequently processed using a Standard Scaler. This normalization is crucial because $p_i$ is directly concatenated with the node's original data $x_i$, thereby averting any scale dominance that could occur if the positional coordinates carried disproportionately larger magnitudes.
+
 \subsection{Model Architecture}
+
+The core processing logic is built upon message-passing principles, where at each layer $\ell$, a node representation $h_i^{(\ell)}$ is successfully updated through aggregating features coming from interacting neighbors:
+\begin{equation}
+    m_i^{(\ell)} = \mathrm{AGG}\left(\left\{\phi\left(h_j^{(\ell)}\right):(j\rightarrow i) \in E\right\}\right), \quad h_i^{(\ell+1)} = \psi\left(h_i^{(\ell)},m_i^{(\ell)}\right),
+\end{equation}
+where $\phi$ provides a linear learnable transformation, $\mathrm{AGG}$ is a permutation-invariant aggregation function (mean pooling in this case), and $\psi$ resolves the aggregated messages with the previous node state.
+
+Following these concepts, our network leverages a Residual Graph Convolutional Network (ResGCN) block for $\psi$, incorporating skip-connections across sequential computations. This layout not only offers direct paths reducing gradient vanishing but also systematically mitigates typical oversmoothing found in deep node propagations, thus preserving essential local node characteristics. Due to the rapid computational expansion related to neighborhood scaling, bounded graph subsampling is also used to filter out distant connections, preventing unmanageable memory footprints during training and inference phases.
+
+All node activations apply the Gaussian Error Linear Unit (GELU) operators, achieving a higher level of continuous differentiable non-linearity to map node variations effectively. Furthermore, these non-linear elements coupled with the model components inherently satisfy monotonicity constraints, confirming that positive variations across individual \gls{qos} metric values consistently translate to non-decreasing final evaluation rankings.
+
+At its endstage, the model functions as a multi-task component divided into two independent heads mapping from the final representations. A reconstruction branch serves as a local decoder measuring deviations mapped against the original scaled inputs, while the main ranking head resolves latent combinations over a sequence of Multi-Layer Perceptrons enforcing the ultimate scalar mapped output bounded in the interval $s_i \in [0, 1]$.
 
 \subsection{Training Objectives and Loss Terms}
 
+In order to optimize accurately across several perspectives, the entire system adopts a weighted sum composing four unique loss elements focused on distinct architectural attributes, expressed as:
 \begin{equation}
     \small
     \mathcal{L} = 
     \lambda_\mathrm{rank} \mathcal{L}_\mathrm{rank} +
     \lambda_\mathrm{recon} \mathcal{L}_\mathrm{recon} +
     \lambda_\mathrm{geo} \mathcal{L}_\mathrm{geo} +
-    \lambda_\mathrm{compass} \mathcal{L}_\mathrm{compass}    
+    \lambda_\mathrm{compass} \mathcal{L}_\mathrm{compass}.
+\end{equation}
+
+The Compass Loss focuses on guiding the global representation direction strictly oriented towards a defined proxy vector $u_i$. It applies the Mean Squared Error directly targeting the outputs computed across predictions $s_i$ available within a batch $B$, driving parameter consistencies matching optimal general directional improvements:
+\begin{equation}
+    \mathcal{L}_{\mathrm{compass}} = \frac{1}{|B|} \sum_{i \in B} (s_i - u_i)^2.
+\end{equation}
+
+The Reconstruction Loss is computed similarly tracking properties emerging from the alternate decoder head. It evaluates the reconstructed parameters $\mathbf{\hat{x}}_i$ against the model input features $\xmodel_i$, establishing a strong autoencoder normalization constraint counteracting degenerative multi-dimensional reductions:
+\begin{equation}
+    \mathcal{L}_{\mathrm{recon}} = \frac{1}{|B|} \sum_{i \in B} \|\mathbf{\hat{x}}_i - \xmodel_i\|_2^2.
+\end{equation}
+
+The Pairwise Ranking Loss establishes structural hierarchies via pairwise ordering comparisons inside drawn batch combinations using margin parameter constraints $m$. Assuming target relation labels computed as $y = \mathrm{sign}(u_A - u_B)$, it effectively captures and orients relative quality improvements directly from pair combinations $(A, B)$:
+\begin{equation}
+    \mathcal{L}_{\mathrm{rank}} = \frac{1}{|B|} \sum_{(A,B) \in B} \max(0, m - y(s_A - s_B)).
+\end{equation}
+
+Finally, the Geometric Smoothness Loss focuses on restricting utility magnitude variations over sub-edge neighbor spaces $E_{\mathrm{sub}}$ mapping structurally linked municipalities. Derived from the discrete graph Dirichlet formulation, this term asserts that similar components share adjacent values preventing abrupt rank variations representing spatial smoothness:
+\begin{equation}
+     \mathcal{L}_{\mathrm{geo}} = \frac{1}{|E_{\mathrm{sub}}|} \sum_{(i,j) \in E_{\mathrm{sub}}} (s_i - s_j)^2.
 \end{equation}
 
 \section{Results and Discussion} \label{sec:results}
+
+In this section, we present the evaluation of the proposed Manifold Ranker framework against the regulatory baseline composites.
+
+Fig.~\ref{fig:hst} illustrates the probability distributions for the baseline indicators $\iqsleg$, $\iqsrev$, and the inferred utility score $s$. The histogram clearly demonstrates that the \gls{iqs} composites are heavily clustered near the upper bound of the scale (around $0.9$), with the legacy composite ($\iqsleg$) being closer to $1.0$ and the revised indicator ($\iqsrev$) demonstrating a slightly smaller peak. This significant score aggregation near the maximum value reflects a loss of global distinction when evaluating similarly performing municipalities. In contrast, the utility score computed by the proposed \gls{gnn} model is widely spread over the domain, presenting a bimodal behavior. The distribution's largest mode is located near $0.6$, with a secondary mode clustering near $0.8$. This structural spacing explicitly favors rank discrimination, indicating that the multi-objective optimization successfully captures the diverse technical variations between the observations.
+
+To spatially validate this framework, we consider a single evaluation frame representing the period of December 2024. Fig.~\ref{fig:mps} shows the comparative geographic mapping for each metric across the Brazilian municipalities. The map visualization strictly corroborates the patterns noticed in the distribution histogram. While the GNN utility score exhibits well-distributed continuous performance transitions smoothly highlighting distinct geographic regions, the traditional indicators cluster the vast majority of points into the highest grading tiers. Such behavior emphasizes the network's capability of mapping dynamic multi-dimensional representations without artificially saturating the score margins.
 
 \begin{figure}
     \centering
@@ -274,6 +319,10 @@ Most implementations of \gls{knn} algorithm traces the most nearest neighbor as 
 % \input{tables/2024_12_top_20}
 
 \section{Conclusions} \label{sec:conclusions}
+
+In this paper, we introduced Manifold Ranker, a \gls{gnn}-based framework designed to resolve ranking imbalances in telecommunications quality assessment. While current regulatory composite metrics, such as the legacy and revised \gls{iqs}, suffer from severe density clustering limiting spatial and technical discrimination, our proposed model effectively maps structural manifold relationships. By combining message-passing aggregations with a multi-objective loss function consisting of pairwise ranking, feature reconstruction, geometric smoothness, and a directional compass penalty, the architecture evaluates a consistent and continuous scoring metric. As demonstrated by the bimodal score distributions and spatial map visualizations, the framework yields well-distributed and distinguishable municipality rankings, overcoming traditional saturation issues.
+
+For future work, we plan to robustly benchmark the proposed approach by comparing its performance against established Learning to Rank (LTR) baselines in the literature. Furthermore, there is significant potential in expanding this analysis to evaluate diverse settings across other socioeconomic domains. Finally, exploring alternative positional encoding methods to evaluate different topological representations, alongside testing other activation functions to assess deep structural stabilities, remain as planned efforts for subsequent research steps.
 
 % \section*{Acknowledgments}
 
