@@ -10,6 +10,7 @@
 \usepackage{booktabs}
 \usepackage{multirow}
 \usepackage{array}
+\usepackage{graphicx}
 \usepackage{subcaption}
 \usepackage{amsfonts}
 \usepackage{xcolor}
@@ -232,8 +233,17 @@ The computed features $p_i$ are subsequently processed using a Standard Scaler. 
 
 The core processing logic is built upon message-passing principles, where at each layer $\ell$, a node representation $h_i^{(\ell)}$ is successfully updated through aggregating features coming from interacting neighbors:
 \begin{equation}
-    m_i^{(\ell)} = \mathrm{AGG}\left(\left\{\phi\left(h_j^{(\ell)}\right):(j\rightarrow i) \in E\right\}\right), \quad h_i^{(\ell+1)} = \psi\left(h_i^{(\ell)},m_i^{(\ell)}\right),
+    m_i^{(\ell)} = \mathrm{AGG}\left(\left\{\phi\left(h_j^{(\ell)}\right):(j\rightarrow i) \in E\right\}\right),
 \end{equation}
+
+\noindent
+with each subsequent layer $h_i^{(\ell+1)}$ being computed as
+\begin{equation}
+    h_i^{(\ell+1)} = \psi\left(h_i^{(\ell)},m_i^{(\ell)}\right),
+\end{equation}
+
+
+\noindent
 where $\phi$ provides a linear learnable transformation, $\mathrm{AGG}$ is a permutation-invariant aggregation function (mean pooling in this case), and $\psi$ resolves the aggregated messages with the previous node state.
 
 Following these concepts, our network leverages a Residual Graph Convolutional Network (ResGCN) block for $\psi$, incorporating skip-connections across sequential computations. This layout not only offers direct paths reducing gradient vanishing but also systematically mitigates typical oversmoothing found in deep node propagations, thus preserving essential local node characteristics. Due to the rapid computational expansion related to neighborhood scaling, bounded graph subsampling is also used to filter out distant connections, preventing unmanageable memory footprints during training and inference phases.
@@ -246,30 +256,32 @@ At its endstage, the model functions as a multi-task component divided into two 
 
 In order to optimize accurately across several perspectives, the entire system adopts a weighted sum composing four unique loss elements focused on distinct architectural attributes, expressed as:
 \begin{equation}
-    \small
-    \mathcal{L} = 
+\begin{aligned}
+    \mathcal{L} &=
     \lambda_\mathrm{rank} \mathcal{L}_\mathrm{rank} +
-    \lambda_\mathrm{recon} \mathcal{L}_\mathrm{recon} +
+    \lambda_\mathrm{recon} \mathcal{L}_\mathrm{recon} \\
+    &+
     \lambda_\mathrm{geo} \mathcal{L}_\mathrm{geo} +
     \lambda_\mathrm{compass} \mathcal{L}_\mathrm{compass}.
+\end{aligned}
 \end{equation}
 
-The Compass Loss focuses on guiding the global representation direction strictly oriented towards a defined proxy vector $u_i$. It applies the Mean Squared Error directly targeting the outputs computed across predictions $s_i$ available within a batch $B$, driving parameter consistencies matching optimal general directional improvements:
+\textit{Compass Loss} $\mathcal{L}_\mathrm{compass}$ focuses on guiding the global representation direction strictly oriented towards a defined proxy vector $u_i$. It applies the Mean Squared Error directly targeting the outputs computed across predictions $s_i$ available within a batch $B$, driving parameter consistencies matching optimal general directional improvements:
 \begin{equation}
     \mathcal{L}_{\mathrm{compass}} = \frac{1}{|B|} \sum_{i \in B} (s_i - u_i)^2.
 \end{equation}
 
-The Reconstruction Loss is computed similarly tracking properties emerging from the alternate decoder head. It evaluates the reconstructed parameters $\mathbf{\hat{x}}_i$ against the model input features $\xmodel_i$, establishing a strong autoencoder normalization constraint counteracting degenerative multi-dimensional reductions:
+The \textit{Reconstruction Loss} $\mathcal{L}_\mathrm{recon}$ is computed similarly tracking properties emerging from the alternate decoder head. It evaluates the reconstructed parameters $\mathbf{\hat{x}}_i$ against the model input features $\xmodel_i$, establishing a strong autoencoder normalization constraint counteracting degenerative multi-dimensional reductions:
 \begin{equation}
     \mathcal{L}_{\mathrm{recon}} = \frac{1}{|B|} \sum_{i \in B} \|\mathbf{\hat{x}}_i - \xmodel_i\|_2^2.
 \end{equation}
 
-The Pairwise Ranking Loss establishes structural hierarchies via pairwise ordering comparisons inside drawn batch combinations using margin parameter constraints $m$. Assuming target relation labels computed as $y = \mathrm{sign}(u_A - u_B)$, it effectively captures and orients relative quality improvements directly from pair combinations $(A, B)$:
+The \textit{Pairwise Ranking Loss} $\mathcal{L}_\mathrm{rank}$ establishes structural hierarchies via pairwise ordering comparisons inside drawn batch combinations using margin parameter constraints $m$. Assuming target relation labels computed as $y = \mathrm{sign}(u_A - u_B)$, it effectively captures and orients relative quality improvements directly from pair combinations $(A, B)$:
 \begin{equation}
     \mathcal{L}_{\mathrm{rank}} = \frac{1}{|B|} \sum_{(A,B) \in B} \max(0, m - y(s_A - s_B)).
 \end{equation}
 
-Finally, the Geometric Smoothness Loss focuses on restricting utility magnitude variations over sub-edge neighbor spaces $E_{\mathrm{sub}}$ mapping structurally linked municipalities. Derived from the discrete graph Dirichlet formulation, this term asserts that similar components share adjacent values preventing abrupt rank variations representing spatial smoothness:
+Finally, the \textit{Geometric Smoothness Loss} $\mathcal{L}_\mathrm{geo}$ focuses on restricting utility magnitude variations over sub-edge neighbor spaces $E_{\mathrm{sub}}$ mapping structurally linked municipalities. Derived from the discrete graph Dirichlet formulation, this term asserts that similar components share adjacent values preventing abrupt rank variations representing spatial smoothness:
 \begin{equation}
      \mathcal{L}_{\mathrm{geo}} = \frac{1}{|E_{\mathrm{sub}}|} \sum_{(i,j) \in E_{\mathrm{sub}}} (s_i - s_j)^2.
 \end{equation}
@@ -293,21 +305,21 @@ To spatially validate this framework, we consider a single evaluation frame repr
     \centering
     \begin{subfigure}[b]{0.32\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{map_score.pdf}
+        \includegraphics[width=\textwidth]{figures/map_score.pdf}
         \caption{Manifold Ranker $s$}
         \label{fig:map_s}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.32\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{map_iqs_old.pdf}
+        \includegraphics[width=\textwidth]{figures/map_iqs_old.pdf}
         \caption{$\iqsleg$}
         \label{fig:map_iqs_leg}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.32\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{map_iqs_new.pdf}
+        \includegraphics[width=\textwidth]{figures/map_iqs_new.pdf}
         \caption{$\iqsrev$}
         \label{fig:map_iqs_ev}
     \end{subfigure}
