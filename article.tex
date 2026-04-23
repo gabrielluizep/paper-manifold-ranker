@@ -47,7 +47,7 @@
 
 
 \begin{abstract}
-Assessing the quality of telecommunications services across municipalities with heterogeneous structural, geographic, and socioeconomic conditions requires methodologies that go beyond simple weighted averages. This paper introduces Manifold Ranker, a \gls{gnn}-based self-supervised ranking framework that learns the geometry of municipality-level telecom quality indicators on a $k$-nearest-neighbor graph and produces a unified ranking score. The proposed architecture employs Residual Graph Convolutional layers and is trained with a multi-objective loss function that simultaneously enforces pairwise ranking consistency, input reconstruction fidelity, geometric smoothness on the learned manifold, and directional alignment with a Pareto-inspired proxy. We validate the approach on a longitudinal dataset covering Brazilian municipalities over multiple monthly periods, totaling over 82{,}000 municipality--period observations. Results show that the proposed model produces scores with a substantially wider effective range (standard deviation of $0.098$) compared to the legacy \gls{iqs} ($0.054$) and revised \gls{iqs} ($0.058$) baselines, improving rank discrimination. Distribution and geographic visualizations confirm that the framework yields well-distributed and distinguishable municipality rankings, overcoming the saturation that affects current regulatory composites.
+Assessing the quality of telecommunications services across municipalities with heterogeneous structural, geographic, and socioeconomic conditions requires methodologies that go beyond simple weighted averages. This paper introduces Manifold Ranker, a \gls{gnn}-based self-supervised ranking framework that learns the geometry of municipality-level telecom quality indicators on a $k$-nearest-neighbor graph and produces a unified ranking score. The proposed architecture employs Residual Graph Convolutional layers and is trained with a multi-objective loss function that simultaneously enforces pairwise ranking consistency, input reconstruction fidelity, geometric smoothness on the learned manifold, and directional alignment with a Pareto-inspired proxy. We validate the approach on a longitudinal dataset covering Brazilian municipalities over multiple monthly periods, totaling over 82{,}000 municipality--period observations. Results show that the proposed model produces scores with a substantially wider effective range (standard deviation of 0.098) compared to the legacy \gls{iqs} (0.054) and revised \gls{iqs} (0.058) baselines, improving rank discrimination. Distribution and geographic visualizations confirm that the framework yields well-distributed and distinguishable municipality rankings, overcoming the saturation that affects current regulatory composites.
 \end{abstract}
 
 \begin{keywords}
@@ -71,7 +71,7 @@ The remainder of the paper is organized as follows.
 Section~\ref{sec:dataset} presents the data used in this work and the currently calculated scores.
 Section~\ref{sec:methodology} explains the concepts and presents the developed Manifold Ranker model.
 Section~\ref{sec:results} presents the achieved results and a comparison with the currently applied strategies.
-Section~\ref{sec:conclusions} makes some final remarks.
+Section~\ref{sec:conclusions} concludes with final remarks.
 
 
 \section{Dataset and Baseline Creation} \label{sec:dataset}
@@ -103,11 +103,10 @@ The legacy composite, $\iqsleg$, aggregates the $K$ normalized
 technical \gls{qos} indicators through a fixed regulator-defined convex
 combination,
 \begin{equation}
-    \iqsleg = y_{\max} \sum_{k=1}^{K} w_k^{\mathrm{leg}} \, \mathrm{IND}_k,
+    \iqsleg = \sum_{k=1}^{K} w_k^{\mathrm{leg}} \, \mathrm{IND}_k,
     \label{eq:qos_leg}
 \end{equation}
-where $y_{\max} = 10$ is the upper bound of the satisfaction scale, each
-$\mathrm{IND}_k \in [0,1]$ is a normalized technical indicator, and the weight vector $w^{\mathrm{leg}} \in \Delta^{K-1}$
+each $\mathrm{IND}_k \in [0,1]$ is a normalized technical indicator, and the weight vector $w^{\mathrm{leg}} \in \Delta^{K-1}$
 lies on the probability simplex. Under the legacy specification, the weights are fixed at
 $w^{\mathrm{leg}} = (0.1,\, 0.1,\, 0.1,\, 0.2,\, 0.1,\, 0.1,\, 0.1,\, 0.2)$,
 assigning greater relevance to $\mathrm{IND}_4$ and $\mathrm{IND}_8$.
@@ -126,7 +125,7 @@ weight assigned to rank position $r$ is
 where $H_K = \sum_{j=1}^{K} 1/j$ is the $K$-th harmonic number. The revised composite
 is then
 \begin{equation}
-    \iqsrev = y_{\max} \sum_{r=1}^{K} \alpha_r \cdot \mathrm{IND}_{\pi(r)} + B_{\mathrm{cov}},
+    \iqsrev = \sum_{r=1}^{K} \alpha_r \cdot \mathrm{IND}_{\pi(r)} + B_{\mathrm{cov}},
     \label{eq:qos_rev}
 \end{equation}
 where $\pi$ is the permutation ordering indicators from worst to best performance, and
@@ -289,7 +288,7 @@ This regularizer enforces the homophily assumption---connected nodes (similar in
 
 In this section, we evaluate the proposed Manifold Ranker against the regulatory baselines using distributional and geographic analyses across 82{,}462 municipality--period observations.
 
-Table~\ref{tab:descriptive} presents descriptive statistics for the three scoring approaches. The legacy composite $\iqsleg$ concentrates scores in a narrow band with a mean of $0.837$ and a standard deviation of only $0.054$; its interquartile range spans merely $0.028$ (from $0.835$ to $0.863$). The revised composite $\iqsrev$ improves dispersion slightly (std $= 0.058$), but still compresses the majority of observations into a limited range with an IQR of $0.028$. In contrast, the proposed model's score $s$ achieves a standard deviation of $0.098$---$1.8\times$ that of $\iqsleg$ and $1.7\times$ that of $\iqsrev$---with an IQR of $0.137$ (from $0.522$ to $0.658$), representing a nearly $5\times$ expansion relative to the baselines. This substantially wider effective range directly enhances rank discrimination, allowing more precise differentiation between municipalities.
+Table~\ref{tab:descriptive} presents descriptive statistics for the three scoring approaches. The legacy composite $\iqsleg$ concentrates scores in a narrow band with a mean of $0.837$ and a standard deviation of only $0.054$; its interquartile range spans merely $0.028$ (from $0.835$ to $0.863$). The revised composite $\iqsrev$ improves dispersion slightly ($\sigma = 0.058$), but still compresses the majority of observations into a limited range with an IQR of $0.028$. In contrast, the proposed model's score $s$ achieves a standard deviation of $0.098$---$1.8\times$ that of $\iqsleg$ and $1.7\times$ that of $\iqsrev$---with an IQR of $0.137$ (from $0.522$ to $0.658$), representing a nearly $5\times$ expansion relative to the baselines. This substantially wider effective range directly enhances rank discrimination, allowing more precise differentiation between municipalities.
 
 \begin{table}[t]
     \centering
@@ -311,16 +310,22 @@ Table~\ref{tab:descriptive} presents descriptive statistics for the three scorin
     \end{tabular}
 \end{table}
 
-Fig.~\ref{fig:hst} illustrates the probability distributions for the three metrics. The histogram clearly demonstrates that the baseline composites are heavily clustered in narrow regions: $\iqsleg$ presents a sharp peak near $0.85$, and $\iqsrev$ concentrates around $0.58$--$0.60$. This significant score aggregation reflects a loss of discrimination when evaluating municipalities with similar, generally satisfactory performance. In contrast, the model's score $s$ is broadly spread over the domain, exhibiting a distribution whose largest concentration lies near $0.55$--$0.65$ with visible spread across the full range. This structural dispersion explicitly favors rank discrimination, indicating that the multi-objective optimization successfully captures diverse technical variations between observations.
+Fig.~\ref{fig:violin} presents a violin plot of the three scoring approaches, enabling simultaneous visualization of the density shape, median, and quartile boundaries. The $\iqsleg$ violin exhibits extreme peakedness: its probability mass is almost entirely concentrated between $0.83$ and $0.87$, forming a narrow, bulging shape that reflects the inability of the legacy composite to spread municipalities across the score domain. The $\iqsrev$ violin is slightly wider but displays a pronounced asymmetry, with a sharp concentration near $0.59$ and a long left tail extending toward $0.05$---indicating that while most municipalities cluster tightly, a few outliers with poor coverage receive substantially lower scores. In contrast, the proposed model's violin is visibly broader and flatter, with its density distributed more uniformly across the range from approximately $0.22$ to $0.80$. This shape confirms that the multi-objective optimization produces a scoring function that utilizes the support domain more effectively, yielding a richer gradient of performance levels.
+
+To quantify the agreement between the proposed score and the regulatory baselines, we compute the Pearson correlation coefficient between $s$ and each baseline. The resulting correlation of $r = 0.58$ indicates a moderate-to-strong linear association, confirming that while the proposed model preserves the general ordering tendency of the existing composites, it introduces sufficient restructuring of the ranking to expand score dispersion and improve discriminability.
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=1\linewidth]{figures/hist.pdf}
-    \caption{Score distribution of $\iqsleg$, $\iqsrev$, and the proposed score $s$. The model achieves a wider spread, enhancing discriminability.}
-    \label{fig:hst}
+    \includegraphics[width=1\linewidth]{figures/violin.pdf}
+    \caption{Violin plot comparing the distributional shapes of $\iqsleg$, $\iqsrev$, and $s$. The proposed score exhibits a broader, flatter density, reflecting enhanced discriminability across the score domain.}
+    \label{fig:violin}
 \end{figure}
 
-To spatially validate the framework, we consider a single evaluation frame representing the period of December 2022. Fig.~\ref{fig:mps} shows the comparative geographic mapping for each metric across Brazilian municipalities. The map visualization corroborates the distributional patterns: while the \gls{gnn} score exhibits continuous performance transitions that clearly highlight distinct geographic regions, the traditional indicators cluster the vast majority of municipalities into the highest or a narrow middle tier. This saturation in the baselines makes it difficult to distinguish between well-performing and under-performing regions, whereas the proposed model reveals fine-grained spatial heterogeneity.
+To spatially validate the framework, we consider a single evaluation frame representing the period of December 2022. Fig.~\ref{fig:mps} shows the comparative geographic mapping for each metric across Brazilian municipalities. The map visualization corroborates the distributional patterns observed in the violin analysis. While the \gls{gnn} score exhibits continuous performance transitions that clearly highlight distinct geographic regions, the traditional indicators cluster the vast majority of municipalities into the highest or a narrow middle tier.
+
+The geographic contrast is particularly evident when comparing macro-regions. In the $\iqsleg$ map, municipalities in the South and Southeast regions---which concentrate the country's telecommunications infrastructure---appear visually indistinguishable from well-connected cities in the North and Northeast, as both are mapped to the same narrow high-score band. This saturation masks known infrastructure disparities between these regions. The $\iqsrev$ map, despite its performance-weighted scheme, exhibits a similar lack of regional differentiation, with most of the territory rendered in a uniform mid-tone.
+
+In contrast, the proposed model's score map reveals a clear North--South gradient consistent with known patterns of infrastructure deployment and population density. Municipalities in the South, Southeast, and parts of the Center-West display higher scores, forming distinguishable clusters, while the North and parts of the Northeast exhibit lower scores that reflect documented challenges in coverage and connectivity. Importantly, even within macro-regions the model captures intra-regional heterogeneity: isolated high-performing municipalities (typically state capitals or large urban centers) are clearly visible against their surrounding rural areas, a distinction that the baselines' compressed ranges cannot render.
 
 \begin{figure*}[t]
     \centering
