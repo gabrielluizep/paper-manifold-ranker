@@ -1,16 +1,234 @@
-@book{ref1,
-  author    = {Lamport, Leslie},
-  title     = {A Document Preparation System: LaTeX, User's Guide and Reference Manual},
-  publisher = {Addison-Wesley Publishing Company},
-  year      = {1986}
+
+@ARTICLE{li2026s3prank,
+	author={Li, Yuchen and Lyu, Zhonghao and Zhang, Yongqi and Zhang, Hao and Peng, Tianhao and Xiong, Haoyi and Wang, Shuaiqiang and Kong, Linghe and Chen, Guihai and Yin, Dawei},
+	journal={IEEE Transactions on Knowledge and Data Engineering}, 
+	title={S$^{3}$PRank: Toward Satisfaction-Oriented Learning to Rank With Semi-Supervised Pre-Training}, 
+	year={2026},
+	volume={38},
+	number={1},
+	pages={559-572},
+	keywords={Feature extraction;Computational modeling;Data models;Search engines;Web search;Poles and towers;Transformers;Training;Web and internet services;Data mining;Learning to rank;large-scale web search;pre-training},
+	doi={10.1109/TKDE.2025.3623607}
 }
 
-@article{ref2,
-  author  = {Silva, F. C. and Sousa, J. J.},
-  title   = {This reference is only an example},
-  journal = {Journal of Examples},
-  volume  = {5},
-  pages   = {52--55},
-  month   = may,
-  year    = {1999}
+@article{amara2025multiview,
+	title = {A multi-view GNN-based network representation learning framework for recommendation systems},
+	journal = {Neurocomputing},
+	volume = {619},
+	pages = {129001},
+	year = {2025},
+	issn = {0925-2312},
+	doi = {https://doi.org/10.1016/j.neucom.2024.129001},
+	url = {https://www.sciencedirect.com/science/article/pii/S0925231224017727},
+	author = {Amina Amara and Mohamed Ali {Hadj Taieb} and Mohamed {Ben Aouicha}},
+	keywords = {Multi-view network representation learning, Recommendation systems, Graph neural networks, BiLSTM, Self-attention mechanism},
+	abstract = {Graph neural network-based methods have been widely adopted by recommendation systems to provide robust backbones for learning embeddings from multi-view graphs. They have the potential to enhance the performance of recommendation systems by transferring abundant knowledge across different views. However, current works still have deficiencies in capturing the various types of relationships present in multi-view data. They overlook the semantic consistency between fused and view representations and have difficulty in modeling the complementary information between different views. To address these limitations, we propose a novel solution named CrossViRec, a Cross-View graph neural network-based model to learn low-dimensional node representations for link Recommendation. The model leverages two key aspects of multi-view networks: diversity and collaboration. Diversity preserves the diverse semantics of different views, while collaboration facilitates the cooperation between these views. Therefore, the model defines two types of embeddings: a high-dimensional shared embedding and a low-dimensional edge embedding for each view. In particular, a function is learned to generate edge embeddings by aggregating features from node’s neighborhood inside various views through a BiLSTM aggregator followed by a self-attention mechanism. To get the overall vector representation on each view, the self-attention mechanism combines different edge embeddings of a given node and then merges them with the shared embedding vector that encodes the cross-view structural features. Experimental evaluations for the proposed model were conducted on four different challenging datasets: YouTube, Amazon, Twitter, and a private cross-social network dataset. The extensive experiments demonstrate that the proposed model can significantly outperform the existing baseline methods for the link recommendation task, and also achieve better performance for cross-social networks link recommendation task.}
+}
+
+@ARTICLE{dai2025survey,
+	author={Dai, Yanpeng and Lyu, Ling and Cheng, Nan and Sheng, Min and Liu, Junyu and Wang, Xiucheng and Cui, Shuguang and Cai, Lin and Shen, Xuemin},
+	journal={IEEE Transactions on Cognitive Communications and Networking}, 
+	title={A Survey of Graph-Based Resource Management in Wireless Networks—Part II: Learning Approaches}, 
+	year={2025},
+	volume={11},
+	number={4},
+	pages={2101-2122},
+	keywords={Wireless networks;Vectors;Optimization;Resource management;Message passing;Training;Surveys;Artificial neural networks;Data models;Aggregates;Wireless networks;resource management;graph},
+	doi={10.1109/TCCN.2024.3508777}
+}
+
+
+@article{shourakchali2025manifold,
+	author    = {Sanaz Gouran Shourakchali and Kamran Layeghi and Faraein Aeini},
+	title     = {Manifold-based graph convolutional network for multi-domain sentiment analysis},
+	journal   = {Signal, Image and Video Processing},
+	year      = {2025},
+	volume    = {19},
+	number    = {14},
+	pages     = {1207},
+	doi       = {10.1007/s11760-025-04761-w},
+	url       = {https://doi.org/10.1007/s11760-025-04761-w},
+	issn      = {1863-1711},
+	abstract  = {This paper presents a graph-based deep learning framework for multi-domain sentiment analysis that integrates manifold learning and capsule aggregation within a unified architecture. The model captures contextual semantics using Bidirectional Encoder Representations from Transformers (BERT) embeddings, constructs word co-occurrence graphs to encode relational dependencies, and applies graph convolutional networks (GCNs) for feature propagation. A manifold learning module preserves the topological structure during dimensionality reduction, while a capsule network with long short-term memory (LSTM)-based dynamic routing aggregates hierarchical and sequential features. Experiments conducted on two benchmark datasets---Multimodal EmotionLines Dataset (MELD) and Amazon Reviews---demonstrate that the proposed method consistently outperforms existing baselines across multiple evaluation metrics, including accuracy, precision, recall, and F1-score. Despite incorporating computationally intensive components, the model maintains competitive training and inference efficiency. The proposed approach offers a scalable, domain-resilient, and structurally aware solution for sentiment classification across diverse textual environments.}
+}
+
+
+@article{akansha2025oversquashing,
+	title = {Over-squashing in Graph Neural Networks: A comprehensive survey},
+	journal = {Neurocomputing},
+	volume = {642},
+	pages = {130389},
+	year = {2025},
+	issn = {0925-2312},
+	doi = {https://doi.org/10.1016/j.neucom.2025.130389},
+	url = {https://www.sciencedirect.com/science/article/pii/S0925231225010616},
+	author = {S. Akansha},
+	keywords = {Graph Neural Networks (GNNs), Over-squashing, Over-smoothing, Graph-rewiring, Graph transformers},
+	abstract = {Graph Neural Networks (GNNs) revolutionize machine learning for graph-structured data, effectively capturing complex relationships. They disseminate information through interconnected nodes, but long-range interactions face challenges known as ”over-squashing”. This survey delves into the challenge of over-squashing in GNNs, where long-range information dissemination is hindered, impacting tasks reliant on intricate long-distance interactions. It comprehensively explores the causes, consequences, and mitigation strategies for over-squashing. Various methodologies are reviewed, including graph rewiring, novel normalization, spectral analysis, and curvature-based strategies, with a focus on their trade-offs and effectiveness. The survey also discusses the interplay between over-squashing and other GNN limitations, such as over-smoothing, and provides a taxonomy of models designed to address these issues in node and graph-level tasks. Benchmark datasets for performance evaluation are also detailed, making this survey a valuable resource for researchers and practitioners in the GNN field.}
+}
+
+@inproceedings{scholkemper2025residual,
+  author    = {Scholkemper, Michael and Wu, Xinyi and Jadbabaie, Ali and Schaub, Michael T.},
+  title     = {Residual Connections and Normalization Can Provably Prevent Oversmoothing in {GNNs}},
+  booktitle = {The Thirteenth International Conference on Learning Representations (ICLR)},
+  year      = {2025},
+  url       = {https://openreview.net/forum?id=i8vPRlsrYu}
+}
+
+@article{koppel2025pairwise,
+	author    = {Marius K{\"o}ppel and Alexander Segner and Martin Wagener and Lukas Pensel and Andreas Karwath and Stefan Kramer},
+	title     = {Pairwise Learning to Rank by Neural Networks Revisited: Reconstruction, Theoretical Analysis and Practical Performance},
+	journal   = {Machine Learning},
+	year      = {2025},
+	volume    = {114},
+	number    = {4},
+	pages     = {112},
+	doi       = {10.1007/s10994-024-06644-6},
+	url       = {https://doi.org/10.1007/s10994-024-06644-6},
+	issn      = {1573-0565},
+	abstract  = {We reevaluate the pairwise learning to rank approach based on neural nets, called RankNet, and present a theoretical analysis of its architecture. We show mathematically that the model can, under certain conditions, learn reflexive, antisymmetric, and transitive relations, enabling simplified training and improved performance. Experimental results on the LETOR MSLR-WEB10K, MQ2007 and MQ2008 datasets show that the model outperforms numerous state-of-the-art methods (including a listwise approach), while being inherently simpler in structure and using a pairwise approach only.}
+}
+
+@ARTICLE{suresh2024machine,
+	author={Suresh, Anirudh and Deb, Kalyanmoy},
+	journal={IEEE Transactions on Evolutionary Computation}, 
+	title={Machine Learning-Based Prediction of New Pareto-Optimal Solutions From Pseudo-Weights}, 
+	year={2024},
+	volume={28},
+	number={5},
+	pages={1351-1365},
+	keywords={Task analysis;Optimization;Indexes;Machine learning;Decision making;Predictive models;Prediction algorithms;Machine learning (ML);multicriterion decision making;multiobjective optimization},
+	doi={10.1109/TEVC.2023.3319494}
+}
+
+@Article{kesireddy2024elite,
+	AUTHOR = {Kesireddy, Adarsh and Medrano, F. Antonio},
+	TITLE = {Elite Multi-Criteria Decision Making—Pareto Front Optimization in Multi-Objective Optimization},
+	JOURNAL = {Algorithms},
+	VOLUME = {17},
+	YEAR = {2024},
+	NUMBER = {5},
+	ARTICLE-NUMBER = {206},
+	URL = {https://www.mdpi.com/1999-4893/17/5/206},
+	ISSN = {1999-4893},
+	ABSTRACT = {Optimization is a process of minimizing or maximizing a given objective function under specified constraints. In multi-objective optimization (MOO), multiple conflicting functions are optimized within defined criteria. Numerous MOO techniques have been developed utilizing various meta-heuristic methods such as Evolutionary Algorithms (EAs), Genetic Algorithms (GAs), and other biologically inspired processes. In a cooperative environment, a Pareto front is generated, and an MOO technique is applied to solve for the solution set. On other hand, Multi-Criteria Decision Making (MCDM) is often used to select a single best solution from a set of provided solution candidates. The Multi-Criteria Decision Making–Pareto Front (M-PF) optimizer combines both of these techniques to find a quality set of heuristic solutions. This paper provides an improved version of the M-PF optimizer, which is called the elite Multi-Criteria Decision Making–Pareto Front (eMPF) optimizer. The eMPF method uses an evolutionary algorithm for the meta-heuristic process and then generates a Pareto front and applies MCDM to the Pareto front to rank the solutions in the set. The main objective of the new optimizer is to exploit the Pareto front while also exploring the solution area. The performance of the developed method is tested against M-PF, Non-Dominated Sorting Genetic Algorithm-II (NSGA-II), and Non-Dominated Sorting Genetic Algorithm-III (NSGA-III). The test results demonstrate the performance of the new eMPF optimizer over M-PF, NSGA-II, and NSGA-III. eMPF was not only able to exploit the search domain but also was able to find better heuristic solutions for most of the test functions used.},
+	DOI = {10.3390/a17050206}
+}
+
+
+@Article{haxhiraj2025pareto,
+	AUTHOR = {Haxhiraj, Eni and Shahu, Desar and Agastra, Elson},
+	TITLE = {Pareto Front Transformation in the Decision-Making Process for Spectral and Energy Efficiency Trade-Off in Massive MIMO Systems},
+	JOURNAL = {Sensors},
+	VOLUME = {25},
+	YEAR = {2025},
+	NUMBER = {5},
+	ARTICLE-NUMBER = {1451},
+	URL = {https://www.mdpi.com/1424-8220/25/5/1451},
+	PubMedID = {40096276},
+	ISSN = {1424-8220},
+	ABSTRACT = {This paper presents a method of choosing a single solution in the Pareto Optimal Front of the multi-objective problem of the spectral and energy efficiency trade-off in Massive MIMO (Multiple Input, Multiple Output) systems. It proposes the transformation of the group of non-dominated alternatives using the Box–Cox transformation with values of λ < 1 so that the graph with a complex shape is transformed into a concave graph. The Box–Cox transformation solves the selection bias shown by the decision-making algorithms in the non-concave part of the Pareto Front. After the transformation, four different MCDM (Multi-Criteria Decision-Making) algorithms were implemented and compared: SAW (Simple Additive Weighting), TOPSIS (Technique for Order of Preference by Similarity to Ideal Solution), PROMITHEE (Preference Ranking Organization Method for Enrichment Evaluations) and VIKOR (Vlse Kriterijumska Optimizacija Kompromisno Resenje). The simulations showed that the best value of the λ parameter is 0, and the MCDM algorithms which explore the Pareto Front completely for different values of weights of the objectives are VIKOR as well as SAW and TOPSIS when they include the Max–Min normalization technique.},
+	DOI = {10.3390/s25051451}
+}
+
+
+@ARTICLE{liu2024qosgnn,
+	author={Liu, Mingyi and Xu, Hanchuan and Sheng, Quan Z. and Wang, Zhongjie},
+	journal={IEEE Transactions on Services Computing}, 
+	title={QoSGNN: Boosting QoS Prediction Performance With Graph Neural Networks}, 
+	year={2024},
+	volume={17},
+	number={2},
+	pages={645-658},
+	keywords={Quality of service;Graph neural networks;Predictive models;Task analysis;Computational modeling;Service computing;Scalability;Quality of service;QoS prediction;graph neural networks;web service;service computing},
+	doi={10.1109/TSC.2023.3343351}
+}
+
+@article{wang2025trust,
+	author    = {Weiwei Wang and Wenping Ma and Kun Yan},
+	title     = {Trust-aware privacy-preserving QoS prediction with graph neural collaborative filtering for internet of things services},
+	journal   = {Complex \& Intelligent Systems},
+	year      = {2025},
+	volume    = {11},
+	number    = {4},
+	pages     = {191},
+	doi       = {10.1007/s40747-025-01824-w},
+	url       = {https://doi.org/10.1007/s40747-025-01824-w},
+	issn      = {2198-6053},
+	abstract  = {The booming development of the Internet of Things (IoT) has led to an explosion of web services, making it more inconvenient for users to choose satisfactory services among numerous options. Therefore, ensuring quality of service (QoS) in a service-oriented IoT environment is crucial, highlighting QoS prediction as a prominent research focus. However, issues related to information credibility, user data privacy, and prediction accuracy in QoS prediction for IoT services have become significant challenges in current research. To tackle these issues, we propose TPP-GNCF, a trust-aware privacy-preserving QoS prediction framework that integrates graph neural networks with collaborative filtering methods. In TPP-GNCF, we filter out untrustworthy QoS values provided by users for certain services to select credible QoS values. Then, a message-passing graph neural network (MP-GNN) is utilized to effectively capture information transmission and relationships in the graph structure, while differential privacy is used to protect user node information. In addition, we use a similarity calculation method based on weight function in collaborative filtering to mine implicit embedded features that graph neural networks cannot directly utilize. Finally, the final missing QoS values are achieved by fusing graph neural predicted QoS and feature collaborative filtering predicted QoS. We conducted extensive experiments on the well-known WS-DREAM dataset. The results demonstrate that the TPP-GNCF framework not only surpasses existing schemes in performance but also effectively addresses issues of information credibility and user privacy.}
+}
+
+@article{zhang2024assessing,
+	title = {Assessing the quality of experience in wireless networks for multimedia applications: A comprehensive analysis utilizing deep learning-based techniques},
+	journal = {Heliyon},
+	volume = {10},
+	number = {9},
+	pages = {e30351},
+	year = {2024},
+	issn = {2405-8440},
+	doi = {https://doi.org/10.1016/j.heliyon.2024.e30351},
+	url = {https://www.sciencedirect.com/science/article/pii/S2405844024063825},
+	author = {Xiaoliang Zhang and Li Li},
+	keywords = {Deep learning, Recurrent neural networks, QoE, Mesh networks, Multimedia},
+	abstract = {In the context of the burgeoning progression of wireless network technology and the corresponding escalation in the demand for mobile Internet-based multimedia transmission services, the task of preserving and augmenting user satisfaction has emerged as an imperative concern. This necessitates a sophisticated and accurate evaluation of multimedia service quality within the sphere of wireless networks. To systematically address the nuanced issue of user experience quality, the present study introduces a novel method for evaluating multimedia Quality of Experience (QoE) in wireless networks, employing an advanced deep learning model as the underlying analytical framework. Initially, the research undertakes the task of modeling the video session process, giving due consideration to the status of each temporal interval within the session's architecture. Subsequently, the challenge of QoE prediction is dissected and investigated through the lens of recurrent neural networks (RNNs), culminating in the proposition of an all-encompassing QoE prediction model that harmoniously integrates video information, Quality of Service (QoS) data, user behavior analytics, and facial expression analysis. The empirical segment of this research serves to validate the efficacy of the suggested video QoE evaluation method, engaging both quantitative and qualitative comparison metrics with contemporaneous state-of-the-art QoE models, employing the RTVCQoE dataset as the empirical foundation. The experimental findings illuminate that the QoE model elucidated in this study transcends competing models in performance metrics such as PLCC, SRCC, and KRCC. Consequently, this investigation stands as a seminal contribution to academic literature, furnishing an exacting and dependable QoE evaluation methodology. Such a contribution augments the user experience landscape in multimedia services within wireless networks, and instigates further scholarly exploration and technological innovation in the mobile Internet domain.}
+}
+
+@Article{wang2025network,
+	AUTHOR = {Wang, Ruonan and Zhao, Jinjing and Zhang, Hongzheng and He, Liqiang and Li, Hu and Huang, Minhuan},
+	TITLE = {Network Traffic Analysis Based on Graph Neural Networks: A Scoping Review},
+	JOURNAL = {Big Data and Cognitive Computing},
+	VOLUME = {9},
+	YEAR = {2025},
+	NUMBER = {11},
+	ARTICLE-NUMBER = {270},
+	URL = {https://www.mdpi.com/2504-2289/9/11/270},
+	ISSN = {2504-2289},
+	ABSTRACT = {Network traffic analysis is crucial for understanding network behavior and identifying underlying applications, protocols, and service groups. The increasing complexity of network environments, driven by the evolution of the Internet, poses significant challenges to traditional analytical approaches. Graph Neural Networks (GNNs) have recently garnered considerable attention in network traffic analysis due to their ability to model complex relationships within network flows and between communicating entities. This scoping review systematically surveys major academic databases, employing predefined eligibility criteria to identify and synthesize key research in the field, following the Preferred Reporting Items for Systematic reviews and Meta-Analyses extension for Scoping Reviews (PRISMA-ScR) methodology. We present a comprehensive overview of a generalized architecture for GNN-based traffic analysis and categorize recent methods into three primary types: node prediction, edge prediction, and graph prediction. We discuss challenges in network traffic analysis, summarize solutions from various methods, and provide practical recommendations for model selection. This review also compiles publicly available datasets and open-source code, serving as valuable resources for further research. Finally, we outline future research directions to advance this field. This work offers an updated understanding of GNN applications in network traffic analysis and provides practical guidance for researchers and practitioners.},
+	DOI = {10.3390/bdcc9110270}
+}
+
+
+
+% ----------------------------------------------------------------
+% Seminal / foundational references that introduced core concepts
+% used throughout this work.
+% ----------------------------------------------------------------
+
+@inproceedings{kipf2017semi,
+  author    = {Kipf, Thomas N. and Welling, Max},
+  title     = {Semi-Supervised Classification with Graph Convolutional Networks},
+  booktitle = {The 5th International Conference on Learning Representations (ICLR)},
+  address   = {Toulon, France},
+  year      = {2017},
+  month     = apr,
+  url       = {https://openreview.net/forum?id=SJU4ayYgl}
+}
+
+@INPROCEEDINGS{he2016deep,
+	author={He, Kaiming and Zhang, Xiangyu and Ren, Shaoqing and Sun, Jian},
+	booktitle={2016 IEEE Conference on Computer Vision and Pattern Recognition (CVPR)}, 
+	title={Deep Residual Learning for Image Recognition}, 
+	year={2016},
+	volume={},
+	number={},
+	pages={770-778},
+	keywords={Training;Degradation;Complexity theory;Image recognition;Neural networks;Visualization;Image segmentation},
+	doi={10.1109/CVPR.2016.90}
+}
+
+@inproceedings{burges2005learning,
+	author = {Burges, Chris and Shaked, Tal and Renshaw, Erin and Lazier, Ari and Deeds, Matt and Hamilton, Nicole and Hullender, Greg},
+	title = {Learning to rank using gradient descent},
+	year = {2005},
+	isbn = {1595931805},
+	publisher = {Association for Computing Machinery},
+	address = {New York, NY, USA},
+	url = {https://doi.org/10.1145/1102351.1102363},
+	doi = {10.1145/1102351.1102363},
+	abstract = {We investigate using gradient descent methods for learning ranking functions; we propose a simple probabilistic cost function, and we introduce RankNet, an implementation of these ideas using a neural network to model the underlying ranking function. We present test results on toy data and on data from a commercial internet search engine.},
+	booktitle = {Proceedings of the 22nd International Conference on Machine Learning},
+	pages = {89–96},
+	numpages = {8},
+	location = {Bonn, Germany},
+	series = {ICML '05}
 }

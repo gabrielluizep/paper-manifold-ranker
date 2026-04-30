@@ -1,3 +1,0 @@
-- Create histogram using `pgfplots`
-  - Export data from Python to use
-- Export map data so LLM can inerpret it
