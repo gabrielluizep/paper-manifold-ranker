@@ -1,0 +1,3 @@
+95\% de cobertura de moradores ou de área. Esqueci de mencionar isso no meu artigo também.
+
+III - Da bonificação por cobertura do SMP: no caso de presença de tecnologia 4G, ou outra superior, no SMP em um município por alguma prestadora, será atribuído um bônus de valor 5 (cinco) ao resultado do IQSmun da prestadora, do serviço SMP e do município correspondentes, quando o percentual de cobertura com tais tecnologias de sua área urbana for igual ou superior a 95\% (noventa e cinco por cento).
