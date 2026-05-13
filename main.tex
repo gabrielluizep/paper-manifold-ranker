@@ -93,11 +93,10 @@ induced ranking.
 
 \gls{anatel} consolidates \gls{qos} indicators at the municipal level 
 through the \gls{iqs}, a linear composite based on weighted aggregation for
-each provider and semester. This approach aligns with international practices,
-reflecting a broader trend of deriving orderings from multidimensional \gls{qos}
-metrics via linear aggregation. However, such non-relational formulations may
-fail to capture the global structure of relative municipal performance. By ignoring 
-dominance relationships, scores become less discriminative, with similar entities 
+each provider and semester~\cite{anatel2025ri444,anatel2021ri71}.
+This approach aligns with international practices, reflecting a broader trend of deriving orderings from multidimensional \gls{qos} metrics via linear aggregation. 
+However, such non-relational formulations may fail to capture the global 
+structure of relative municipal performance. By ignoring dominance relationships, scores become less discriminative, with similar entities 
 assigned near-identical values. As shown, the legacy IQS concentrates 50\% of observations between 0.835 and 0.863, an interquartile range of only 0.028.
 
 To address these challenges, we propose a \gls{gnn}-based Pareto-inspired model that learns, through pairwise competition between entities, a scalar quality score $\hat{r}_i$for each municipality $i$. A \gls{knn} graph over the feature space provides the relational structure for this learning process. Experimental results indicate that the proposed multi-objective scheme expands score dispersion and improves rank discriminability, yielding a more favorable optimization landscape than unidimensional scalar approaches.
@@ -141,7 +140,7 @@ scores\footnote{Referred to by \gls{anatel} as \gls{iqs} (Índice de Qualidade d
 The \gls{iqs} is officially published on a semi-annual 
 basis, indexed by provider and municipality, with the primary objective 
 of monitoring and evaluating telecommunications service quality in Brazil 
-through a transparent and comparative indicator of provider performance. 
+through a transparent and comparative indicator of provider performance~\cite{anatel2025ri444,anatel2021ri71}. 
 
 For our analysis, we derive monthly estimates aggregated at the 
 municipality level by averaging across providers, both composites 
@@ -353,7 +352,7 @@ To assess whether the proposed score reflects meaningful socioeconomic structure
 
 To spatially validate the framework, December 2022 was selected as the evaluation frame corresponding to the period with the fewest missing values across municipalities. Fig.~\ref{fig:mps} shows the comparative geographic mapping for each metric across Brazilian municipalities. While the proposed model score exhibits continuous performance transitions that highlight distinct geographic regions---consistent with the distributional patterns observed in the histogram analysis---the regulatory indicators collapse the vast majority of municipalities into either the highest score band or a narrow intermediate range.
 
-The geographic contrast is particularly evident when comparing macro-regions. In the $\iqsleg$ map, municipalities in the South and Southeast regions---which concentrate the country's telecommunications infrastructure---appear visually indistinguishable from well-connected cities in the North and Northeast, as both are mapped to the same narrow high-score band. This score compression---whereby municipalities with substantially different performance profiles are assigned nearly identical composite values, creating plateaus that flatten the distribution---masks known infrastructure and socioeconomic disparities between these regions. According to the \gls{mhdi} compiled by the United Nations Development Programme, all states in the North and Northeast present \gls{mhdi} values below the national average, in stark contrast to the South and Southeast, where the majority of municipalities fall within the higher development tiers~\cite{undp2023mhdi}. The $\iqsrev$ map, despite its performance-weighted scheme, still exhibits limited score dispersion, with most of the territory concentrated in a narrow range---even though broad regional contrasts, such as the separation between the North and the remaining regions, remain discernible. The proposed framework amplifies this variation, extending discriminability across the full municipality distribution.
+The geographic contrast is particularly evident when comparing macro-regions. In the $\iqsleg$ map, municipalities with substantially different performance profiles are assigned nearly identical composite values, creating plateaus that flatten the distribution---masks known infrastructure and socioeconomic disparities between these regions. According to the \gls{mhdi} compiled by the United Nations Development Programme, all states in the North and Northeast present \gls{mhdi} values below the national average, in stark contrast to the South and Southeast, where the majority of municipalities fall within the higher development tiers~\cite{undp2023mhdi}. The $\iqsrev$ map, despite its performance-weighted scheme, still exhibits limited score dispersion, with most of the territory concentrated in a narrow range---even though broad regional contrasts, such as the separation between the North and the remaining regions, remain discernible. The proposed framework amplifies this variation, extending discriminability across the full municipality distribution.
 
 In contrast, the proposed model's score map reveals a clear North--South gradient consistent with the known human development landscape across Brazilian macro-regions~\cite{undp2023mhdi}. Municipalities in the South, Southeast, and parts of the Center-West display higher scores, forming distinguishable clusters, while the North and parts of the Northeast exhibit lower scores aligned with their documented development challenges~\cite{undp2023mhdi}. Importantly, even within macro-regions the model captures intra-regional heterogeneity: isolated high-performing municipalities (typically state capitals or large urban centers) are clearly visible against their surrounding rural areas, a distinction that the baselines' compressed ranges cannot render.
 
