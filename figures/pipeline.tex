@@ -29,31 +29,36 @@
 ]
 
 % ---------- Nodes (left to right) ----------
-\node (X) {$\mathbf{X}^\mathrm{raw}$};
+\node (X) {$\mathbf{X}$};
 
-\node[block, right=1.5cm of X] (pre) {Data\\preprocessing};
+\node[block, below=0.6cm of X] (pre) {Data\\preprocessing};
 
 \node[block, right=1.8cm of pre] (graph) {Graph\\construction};
 
 \node[block, right=1.8cm of graph] (pos) {Positional\\Encoding};
 
-\node[block, right=1.8cm of pos] (model) {Model};
+\node[block, below=0.6cm of graph] (model) {Pareto Inspired \\ Model};
 
-\node[right=1.5cm of model] (s) {$s_i$};
+\node[right=1.2cm of model] (s) {$\hat{r}_i$};
 
 % ---------- Main pipeline arrows ----------
 \draw[arrow] (X)     -- (pre);
-\draw[arrow] (pre)   -- node[label] {$\mathbf{X}^\mathrm{model}$} (graph);
+\draw[arrow] (pre)   -- node[label] {$\tilde{\mathbf{X}}$} (graph);
 \draw[arrow] (graph) -- (pos);
-\draw[arrow] (pos)   -- (model);
+% \draw[arrow] (pos)   -- (model);
 \draw[arrow] (model) -- (s);
 
 % ---------- Dashed bypass arrow (pre → model, below) ----------
 \draw[arrow, dashed, rounded corners=8pt]
     (pre.south)
-    -- ++(0, -1.2)
-    -| node[font=\footnotesize, pos=0.25, below] {$\mathbf{X}^\mathrm{pareto}$}
-    (model.south);
+    |- node[font=\footnotesize, pos=0.5, below]
+    {$\mathbf{X}^\succ$}
+    (model.west);
+
+\draw[arrow, rounded corners=8pt]
+    (pos.south)
+    -- ++(0, -0.3) -|
+    (model.north);
 
 \end{tikzpicture}
 

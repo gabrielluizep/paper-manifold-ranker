@@ -6,34 +6,37 @@
 \begin{document}
 \begin{tikzpicture}
     \begin{axis}[
-        title={Distributions of $s$, $\mathrm{IQS}_\mathrm{leg}$, and $\mathrm{IQS}_\mathrm{rev}$},
-        ylabel={Value},
-        xmin=0, xmax=4,
-        xtick={1, 2, 3},
-        xticklabels={$s$, $\mathrm{IQS}_\mathrm{leg}$, $\mathrm{IQS}_\mathrm{rev}$},
-        enlarge y limits=0.05,
-        ymajorgrids=true,
+        % --- New size and spacing constraints ---
+        height=6cm,         % Forces the plot to use less vertical height
+        width=12cm,         % Keeps the plot stretched horizontally
+        ymin=0.5, ymax=3.5, % Tightens the bounds to remove blank space (was 0 to 4)
+        % ----------------------------------------
+        xlabel={Value},
+        ytick={1, 2, 3},
+        yticklabels={$\hat{r}$, $\mathrm{IQS}_\mathrm{leg}$, $\mathrm{IQS}_\mathrm{rev}$},
+        enlarge x limits=0.05,
+        ymajorgrids=true,   % Draws horizontal lines at the y-ticks
     ]
 
     % --- Position 1: Score ---
     \addplot [name path=score_R, draw=blue!80!black, forget plot] 
-        table [x=score_right, y=y, col sep=comma] {violin_coordinates.csv};
+        table [x=y, y=score_right, col sep=comma] {violin_coordinates.csv};
     \addplot [name path=score_L, draw=blue!80!black, forget plot] 
-        table [x=score_left, y=y, col sep=comma] {violin_coordinates.csv};
+        table [x=y, y=score_left, col sep=comma] {violin_coordinates.csv};
     \addplot [fill=blue!60, fill opacity=0.5] fill between[of=score_L and score_R];
 
     % --- Position 2: IQS Leg Scaled ---
     \addplot [name path=leg_R, draw=red!80!black, forget plot] 
-        table [x=iqs_leg_scaled_right, y=y, col sep=comma] {violin_coordinates.csv};
+        table [x=y, y=iqs_leg_scaled_right, col sep=comma] {violin_coordinates.csv};
     \addplot [name path=leg_L, draw=red!80!black, forget plot] 
-        table [x=iqs_leg_scaled_left, y=y, col sep=comma] {violin_coordinates.csv};
+        table [x=y, y=iqs_leg_scaled_left, col sep=comma] {violin_coordinates.csv};
     \addplot [fill=red!60, fill opacity=0.5] fill between[of=leg_L and leg_R];
 
     % --- Position 3: IQS Rev Scaled ---
     \addplot [name path=rev_R, draw=green!80!black, forget plot] 
-        table [x=iqs_rev_scaled_right, y=y, col sep=comma] {violin_coordinates.csv};
+        table [x=y, y=iqs_rev_scaled_right, col sep=comma] {violin_coordinates.csv};
     \addplot [name path=rev_L, draw=green!80!black, forget plot] 
-        table [x=iqs_rev_scaled_left, y=y, col sep=comma] {violin_coordinates.csv};
+        table [x=y, y=iqs_rev_scaled_left, col sep=comma] {violin_coordinates.csv};
     \addplot [fill=green!60, fill opacity=0.5] fill between[of=rev_L and rev_R];
 
     \end{axis}
