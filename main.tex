@@ -49,7 +49,7 @@
 
 
 \begin{abstract}
-	Assessing telecommunications mobile services quality across municipalities with heterogeneous structural, geographic, and socioeconomic conditions requires methodologies beyond simple scalar or functional aggregations. This paper introduces a self-supervised Graph Neural Network (GNN) based ranking framework that learns the geometry of municipality-level Quality of Service (QoS) indicators on a $k$-nearest-neighbor graph, producing a unified ranking guided by a Pareto-inspired proxy in the absence of labeled rankings. The architecture employs Residual Graph Convolutional layers and is trained with a multi-objective loss function that enforces pairwise ranking consistency, input reconstruction fidelity, geometric smoothness on the learned manifold, and directional alignment with a Pareto-inspired proxy. The approach is validated on a longitudinal dataset covering Brazilian municipalities over multiple monthly periods, totaling over 82,000 municipality--period observations. Results show that the proposed model produces scores with a wider effective range ($\sigma=0.098$) than ANATEL's legacy QoS ($\sigma=0.054$) and its revised version ($\sigma=0.058$) baselines, improving rank discrimination. Distributional and spatial analyses indicate that the framework produces more informative and distinguishable municipality rankings, mitigating the concentration effects observed in current regulatory composite indicators.
+	Assessing telecommunications mobile services quality across municipalities with heterogeneous structural, geographic, and socioeconomic conditions requires methodologies beyond simple scalar or functional aggregations. This paper introduces a self-supervised Graph Neural Network (GNN) based ranking framework that learns the geometry of municipality-level Quality of Service (QoS) indicators on a $k$-nearest-neighbor graph, producing a unified ranking guided by a Pareto-inspired proxy in the absence of labeled rankings. The architecture employs residual graph convolutional layers and is trained with a multi-objective loss function that enforces pairwise ranking consistency, input reconstruction fidelity, geometric smoothness on the learned manifold, and directional alignment with a Pareto-inspired proxy. The approach is validated on a longitudinal dataset covering Brazilian municipalities over multiple monthly periods, totaling over 82,000 municipality--period observations. Results show that the proposed model produces scores with a wider effective range ($\sigma=0.098$) than ANATEL's legacy QoS ($\sigma=0.054$) and its revised version ($\sigma=0.058$) baselines, improving rank discrimination. Distributional and spatial analyses indicate that the framework produces more informative and distinguishable municipality rankings, mitigating the concentration effects observed in current regulatory composite indicators.
 \end{abstract}
 
 \begin{keywords}
@@ -69,16 +69,7 @@ prediction~\cite{liu2024qosgnn,wang2025trust}, deep-learning-based \gls{qoe}
 assessment for wireless networks~\cite{zhang2024assessing}, and modern Learning to 
 Rank techniques that learn scoring functions directly from data~\cite{li2026s3prank}.
 
-Defining a suitable ranking strategy is not trivial. The multidimensional 
-nature of telecommunications quality---encompassing network and customer-related
-aspects---means that different indicators can lead to conflicting orderings, a 
-characteristic of multi-objective optimization problems, where no single solution simultaneously
-optimizes all criteria~\cite{suresh2024machine,kesireddy2024elite}.
-A definitive ground-truth ranking is difficult to establish; evaluating model 
-outputs relies on partial ordering frameworks and contextual domain knowledge. 
-Selecting the essential variables for ranking definition is equally unclear: not 
-only \gls{qos} indicators are required, but also covariates such as infrastructure 
-and \gls{qoe} indicators.
+Defining a suitable ranking strategy is not trivial. The multidimensional nature of telecommunications quality---encompassing network and customer-related aspects---means that different indicators can lead to conflicting orderings, a characteristic of multi-objective optimization problems, where no single solution simultaneously optimizes all criteria~\cite{suresh2024machine,kesireddy2024elite}. Establishing a definitive ground-truth ranking is difficult; evaluating model outputs relies on partial-ordering frameworks and domain-specific contextual knowledge. Selecting the essential variables for ranking definition is equally unclear: not only \gls{qos} indicators are required, but also covariates such as infrastructure and \gls{qoe} indicators.
 
 In multi-objective settings, Pareto dominance provides a natural partial ordering: 
 municipality $A$ dominates municipality $B$ if $A$ is at least as good in every 
@@ -94,12 +85,12 @@ induced ranking.
 \gls{anatel} consolidates \gls{qos} indicators at the municipal level 
 through the \gls{iqs}, a linear composite based on weighted aggregation for
 each provider and semester~\cite{anatel2025ri444,anatel2021ri71}.
-This approach aligns with international practices, reflecting a broader trend of deriving orderings from multidimensional \gls{qos} metrics via linear aggregation. 
+This approach aligns with international practices and reflects a broader trend of deriving orderings from multidimensional \gls{qos} metrics via linear aggregation. 
 However, such non-relational formulations may fail to capture the global 
 structure of relative municipal performance. By ignoring dominance relationships, scores become less discriminative, with similar entities 
 assigned near-identical values. As shown, the legacy IQS concentrates 50\% of observations between 0.835 and 0.863, an interquartile range of only 0.028.
 
-To address these challenges, we propose a \gls{gnn}-based Pareto-inspired model that learns, through pairwise competition between entities, a scalar quality score $\hat{r}_i$for each municipality $i$. A \gls{knn} graph over the feature space provides the relational structure for this learning process. Experimental results indicate that the proposed multi-objective scheme expands score dispersion and improves rank discriminability, yielding a more favorable optimization landscape than unidimensional scalar approaches.
+To address these challenges, we propose a \gls{gnn}-based Pareto-inspired model that learns, through pairwise competition between entities, a scalar quality score $\hat{r}_i$ for each municipality $i$. A \gls{knn} graph over the feature space provides the relational structure for this learning process. Experimental results indicate that the proposed multi-objective scheme expands score dispersion and improves rank discriminability, yielding a more favorable optimization landscape than unidimensional scalar approaches.
 
 The remainder of the paper is organized as follows.
 Section~\ref{sec:dataset} describes the dataset of municipality-level \gls{qos},
@@ -115,10 +106,8 @@ for future work.
 
 \section{Dataset and Baseline Creation} \label{sec:dataset}
 
-The dataset comprises mobile service \gls{qos} and \gls{qoe} indicators and infrastructure covariates provided by \gls{anatel},
-creating a matrix $\Xraw \in \mathbb{R}^{N \times D}$, where $N$ corresponds to the number of municipality--period entities and $D$ corresponds to the number of features.
-$\Xraw$ is indexed by two keys: \textit{month}, which identifies the observation period, and a unique \textit{municipality identifier}. 
-Each row therefore corresponds to one municipality--month pair.
+The dataset comprises mobile service \gls{qos} and \gls{qoe} indicators and infrastructure covariates provided by \gls{anatel}, creating a matrix $\Xraw \in \mathbb{R}^{N \times D}$, where $N$ corresponds to the number of municipality--period entities and $D$ corresponds to the number of features.
+$\Xraw$ is indexed by two keys: \textit{month}, which identifies the observation period, and a unique \textit{municipality identifier}. Each row, therefore, corresponds to one municipality--month pair.
 Since not all selected features are available at monthly granularity, interpolation schemes are applied where necessary.
 
 The eight indicators available for the mobile service were selected as \gls{qos} features and normalized to $[0,1]$:
@@ -145,9 +134,7 @@ through a transparent and comparative indicator of provider performance~\cite{an
 For our analysis, we derive monthly estimates aggregated at the 
 municipality level by averaging across providers, both composites 
 linearly combining $\mathrm{IND}_1$ through $\mathrm{IND}_8$.
-The legacy composite $\iqsleg = \sum_{k=1}^{K} w_k^{\mathrm{leg}}\,\mathrm{IND}_k$, 
-in use since November 2021, uses fixed weights
-$w^{\mathrm{leg}} = (0.1, 0.1, 0.1, 0.2, 0.1, 0.1, 0.1, 0.2)$, assigning 
+The legacy composite $\iqsleg = \sum_{k=1}^{K} w_k^{\mathrm{leg}}\,\mathrm{IND}_k$, in use since November 2021, uses fixed weights $w^{\mathrm{leg}} = (0.1, 0.1, 0.1, 0.2, 0.1, 0.1, 0.1, 0.2)$, assigning 
 greater relevance to $\mathrm{IND}_4$ and $\mathrm{IND}_8$.
 The revised composite $\iqsrev$, replacing the legacy since June 2025, 
 adopts a performance-dependent scheme: indicators are ranked from worst 
@@ -253,7 +240,7 @@ with each subsequent layer computed as
 \noindent
 where $\phi$ is a learnable linear transformation, $\mathrm{AGG}$ is a permutation-invariant aggregator (mean pooling), and $\psi$ combines the aggregated messages with the node's current state through a learnable affine transformation followed by a non-linear activation~\cite{amara2025multiview}.
 
-The proposed ranking framework network uses Residual Graph Convolutional (ResGCN) blocks for $\psi$, incorporating skip-connections in the spirit of the original residual learning paradigm~\cite{he2016deep,scholkemper2025residual}. Given the node feature matrix $X \in \mathbb{R}^{n \times d_{in}}$ for a subgraph with $n$ nodes and edge list in COO format, each ResGCN layer computes:
+The proposed ranking framework network uses Residual Graph Convolutional (ResGCN) blocks for $\psi$, incorporating skip-connections in the spirit of the original residual learning paradigm~\cite{he2016deep,scholkemper2025residual}. Given the node feature matrix $X \in \mathbb{R}^{n \times d_{in}}$ for a subgraph with $n$ nodes and edge list in COO format, each ResGCN layer computes
 \begin{equation}
 	\begin{aligned}
 	    H &= X W_{\mathrm{proj}}^\top + b_{\mathrm{proj}}, \\
@@ -263,9 +250,9 @@ The proposed ranking framework network uses Residual Graph Convolutional (ResGCN
 \end{equation}
 
 \noindent
-where the skip path is either the identity (when dimensions match) or a linear projection. This residual structure shortens gradient paths that improve trainability and mitigate oversmoothing---the convergence of node representations under repeated neighborhood aggregation~\cite{scholkemper2025residual,akansha2025oversquashing}.
+where the skip path is either the identity (when dimensions match) or a linear projection, this residual structure shortens gradient paths that improve trainability and mitigate oversmoothing---the convergence of node representations under repeated neighborhood aggregation~\cite{scholkemper2025residual,akansha2025oversquashing}.
 
-Due to the rapid computational expansion related to neighborhood scaling, bounded graph subsampling via breadth-first search with neighbor down-sampling is employed. At each hop, neighbor lists are randomly subsampled to a fixed limit, and a hard cap on total nodes is enforced. This enables memory-efficient training by transferring only small 
+Due to the rapid computational growth associated with neighborhood scaling, bounded graph subsampling via breadth-first search with neighbor downsampling is employed. At each hop, neighbor lists are randomly subsampled to a fixed limit, and a hard cap on the total number of nodes is enforced. This enables memory-efficient training by transferring only small 
 induced subgraphs to the processing device at each step.
 
 All activations use the Gaussian Error Linear Unit (GELU), achieving smooth, continuously differentiable non-linearity. GELU is monotone increasing for positive and small negative values, coupled with the model components, satisfies monotonicity constraints: positive variations in individual \gls{qos} metrics consistently translate to non-decreasing scores.
@@ -288,7 +275,6 @@ The model uses a weighted sum of four loss terms to jointly optimize complementa
 \end{equation}
 
 The Compass Loss $\mathcal{L}_\mathrm{comp}$ aligns model scores with the proxy $u_i$, providing a monotone directional signal during training
-
 \begin{equation}
     \mathcal{L}_{\mathrm{comp}} = \frac{1}{|B|} \sum_{i \in B} (s_i - u_i)^2.
 \end{equation}
@@ -297,24 +283,19 @@ The Compass Loss $\mathcal{L}_\mathrm{comp}$ aligns model scores with the proxy 
 where $B$ denotes the current training mini-batch.
 
 The Reconstruction Loss $\mathcal{L}_\mathrm{recon}$ evaluates the decoder's ability to recover the original standardized features, enforcing information preservation
-
 \begin{equation}
     \mathcal{L}_{\mathrm{recon}} = \frac{1}{|B|} \sum_{i \in B} \|\mathbf{\hat{x}}_i - \xmodel_i\|_2^2.
 \end{equation}
 
-The Pairwise Ranking Loss $\mathcal{L}_\mathrm{rank}$ establishes ordering constraints via margin-based pairwise comparisons, following the classical RankNet formulation~\cite{burges2005learning} and its recent neural extensions~\cite{koppel2025pairwise}. For two entities $A$ and $B$ with target label $y = \mathrm{sign}(u_A - u_B)$, where $u_A$ and $u_B$ are the proxy utility values of municipalities $A$ and $B$, respectively:
+The Pairwise Ranking Loss $\mathcal{L}_\mathrm{rank}$ establishes ordering constraints via margin-based pairwise comparisons, following the classical RankNet formulation~\cite{burges2005learning} and its recent neural extensions~\cite{koppel2025pairwise}. For two entities $A$ and $B$ with target label $y = \mathrm{sign}(u_A - u_B)$, where $u_A$ and $u_B$ are the proxy utility values of municipalities $A$ and $B$, respectively
 \begin{equation}
     \mathcal{L}_{\mathrm{rank}} = \frac{1}{|P|} \sum_{(A,B) \in P} \max(0, m - y(s_A - s_B)),
 \end{equation}
 
 \noindent
-the margin $m$ serves a dual purpose: it demands a minimum score separation between pairs ordered by the proxy, and it suppresses the contribution of pairs whose proxy difference $|u_A - u_B|$ is small---and therefore potentially unreliable---by allowing the loss to reach zero before perfect separation is achieved. Pairs that violate the margin constraint are penalized linearly, while correctly ordered pairs with sufficient separation contribute zero loss.
+where the margin $m$ serves a dual purpose: it demands a minimum score separation between pairs ordered by the proxy, and it suppresses the contribution of pairs whose proxy difference $|u_A - u_B|$ is small---and therefore potentially unreliable---by allowing the loss to reach zero before perfect separation is achieved. Pairs that violate the margin constraint are penalized linearly, while correctly ordered pairs with sufficient separation contribute zero loss.
 
-The Geometric Smoothness Loss $\mathcal{L}_\mathrm{geo}$ encourages 
-score consistency among neighboring nodes by penalizing large score 
-differences across edges, following the discrete Dirichlet energy on 
-the graph
-
+The Geometric Smoothness Loss $\mathcal{L}_\mathrm{geo}$ encourages score consistency among neighboring nodes by penalizing large score differences across edges, following the discrete Dirichlet energy on the graph
 \begin{equation}
     \label{eq:l_geo}
      \mathcal{L}_{\mathrm{geo}} 
@@ -346,15 +327,15 @@ To assess whether the proposed score reflects meaningful socioeconomic structure
 \begin{figure}[t]
     \centering
     \includegraphics[width=1\linewidth]{figures/hist.pdf}
-    \caption{Comparison between score and baselines distributions.}
+    \caption{Comparison between score and baseline distributions.}
     \label{fig:hist}
 \end{figure}
 
 To spatially validate the framework, December 2022 was selected as the evaluation frame corresponding to the period with the fewest missing values across municipalities. Fig.~\ref{fig:mps} shows the comparative geographic mapping for each metric across Brazilian municipalities. While the proposed model score exhibits continuous performance transitions that highlight distinct geographic regions---consistent with the distributional patterns observed in the histogram analysis---the regulatory indicators collapse the vast majority of municipalities into either the highest score band or a narrow intermediate range.
 
-The geographic contrast is particularly evident when comparing macro-regions. In the $\iqsleg$ map, municipalities with substantially different performance profiles are assigned nearly identical composite values, creating plateaus that flatten the distribution---masks known infrastructure and socioeconomic disparities between these regions. According to the \gls{mhdi} compiled by the United Nations Development Programme, all states in the North and Northeast present \gls{mhdi} values below the national average, in stark contrast to the South and Southeast, where the majority of municipalities fall within the higher development tiers~\cite{undp2023mhdi}. The $\iqsrev$ map, despite its performance-weighted scheme, still exhibits limited score dispersion, with most of the territory concentrated in a narrow range---even though broad regional contrasts, such as the separation between the North and the remaining regions, remain discernible. The proposed framework amplifies this variation, extending discriminability across the full municipality distribution.
+The geographic contrast is particularly evident when comparing macro-regions. In the $\iqsleg$ map, municipalities with substantially different performance profiles are assigned nearly identical composite values, creating plateaus that flatten the distribution---masks known infrastructure and socioeconomic disparities between these regions. According to the \gls{mhdi} compiled by the United Nations Development Programme, all states in the North and Northeast present \gls{mhdi} values below the national average, in stark contrast to the South and Southeast, where the majority of municipalities fall within the higher development tiers~\cite{undp2023mhdi}. The $\iqsrev$ map, despite its performance-weighted scheme, still exhibits limited score dispersion, with most of the territory concentrated in a narrow range---even though broad regional contrasts, such as the separation between the North and the remaining regions, remain discernible. The proposed framework amplifies this variation, extending discriminability across the full distribution of the municipality.
 
-In contrast, the proposed model's score map reveals a clear North--South gradient consistent with the known human development landscape across Brazilian macro-regions~\cite{undp2023mhdi}. Municipalities in the South, Southeast, and parts of the Center-West display higher scores, forming distinguishable clusters, while the North and parts of the Northeast exhibit lower scores aligned with their documented development challenges~\cite{undp2023mhdi}. Importantly, even within macro-regions the model captures intra-regional heterogeneity: isolated high-performing municipalities (typically state capitals or large urban centers) are clearly visible against their surrounding rural areas, a distinction that the baselines' compressed ranges cannot render.
+In contrast, the proposed model's score map reveals a clear North--South gradient consistent with the known human development landscape across Brazilian macro-regions~\cite{undp2023mhdi}. Municipalities in the South, Southeast, and parts of the Center-West display higher scores, forming distinguishable clusters. In comparison, the North and parts of the Northeast exhibit lower scores aligned with their documented development challenges~\cite{undp2023mhdi}. Importantly, even within macro-regions, the model captures intra-regional heterogeneity: isolated high-performing municipalities (typically state capitals or large urban centers) are clearly visible against their surrounding rural areas, a distinction that the baselines' compressed ranges cannot render.
 
 \begin{figure}[t]
     \centering
@@ -396,12 +377,11 @@ While the analyzed \gls{anatel} composite indices exhibit pronounced score clust
 
 By combining pairwise ranking, feature reconstruction, geometric smoothness, and a directional compass penalty, the model's optimization covers distinct, complementary dimensions, yielding a more balanced solution than that provided by one-dimensional scalar optimization. The quantitative analysis confirms the proposed score achieves an interquartile range of $0.137$, representing a nearly $5\times$ expansion compared to both baselines---IQR $= 0.028$ for $\iqsleg$ and IQR $= 0.028$ for $\iqsrev$---and a standard deviation $1.8$ times larger than the $\iqsleg$. External validation against the \gls{mhdi} further corroborates these findings: the proposed score correlates with the index at $\rho = 0.40$, exceeding the baselines' correlation by $0.07$ and $0.05$, indicating that the learned ranking captures socioeconomic structure beyond what the linear composites encode.
 
-Future work can benchmark the proposed approach against established learning-to-rank methods. Strengthening the external validation with additional 
-extra-set covariates independent of telecommunications is also a planned direction. 
+Future work can benchmark the proposed approach against established learning-to-rank methods. Strengthening the external validation with additional extra-set covariates independent of telecommunications is also a planned direction. 
 Furthermore, the approach can also be extended to other socioeconomic domains. 
 Finally, exploring alternative positional encoding methods, such as Spectral Embedding 
 for non-linear manifold coordinates, and testing other activation functions to assess 
-infrastructural stability, remain planned efforts for subsequent research.
+infrastructural stability, and remain planned efforts for subsequent research.
 
 % \section*{Acknowledgments}
 
