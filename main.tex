@@ -49,11 +49,11 @@
 
 
 \begin{abstract}
-	Assessing telecommunications mobile services quality across municipalities with heterogeneous structural, geographic, and socioeconomic conditions requires methodologies beyond simple scalar or functional aggregations. This paper introduces a self-supervised Graph Neural Network (GNN) based ranking framework that learns the geometry of municipality-level Quality of Service (QoS) indicators on a $k$-nearest-neighbor graph, producing a unified ranking guided by a Pareto-inspired proxy in the absence of labeled rankings. The architecture employs residual graph convolutional layers and is trained with a multi-objective loss function that enforces pairwise ranking consistency, input reconstruction fidelity, geometric smoothness on the learned manifold, and directional alignment with a Pareto-inspired proxy. The approach is validated on a longitudinal dataset covering Brazilian municipalities over multiple monthly periods, totaling over 82,000 municipality--period observations. Results show that the proposed model produces scores with a wider effective range ($\sigma=0.098$) than ANATEL's legacy QoS ($\sigma=0.054$) and its revised version ($\sigma=0.058$) baselines, improving rank discrimination. Distributional and spatial analyses indicate that the framework produces more informative and distinguishable municipality rankings, mitigating the concentration effects observed in current regulatory composite indicators.
+    Assessing telecommunications mobile services quality across municipalities with heterogeneous structural, geographic, and socioeconomic conditions requires methodologies beyond simple scalar or functional aggregations. This paper introduces a self-supervised Graph Neural Network (GNN) based ranking framework that learns the geometry of municipality-level Quality of Service (QoS) indicators on a $k$-nearest-neighbor graph, producing a unified ranking guided by a Pareto-inspired proxy in the absence of labeled rankings. The architecture employs residual graph convolutional layers and is trained with a multi-objective loss function that enforces pairwise ranking consistency, input reconstruction fidelity, geometric smoothness on the learned manifold, and directional alignment with a Pareto-inspired proxy. The approach is validated on a longitudinal dataset covering Brazilian municipalities over multiple monthly periods, totaling over 82,000 municipality--period observations. Results show that the proposed model produces scores with a wider effective range ($\sigma=0.098$) than ANATEL's legacy QoS ($\sigma=0.054$) and its revised version ($\sigma=0.058$) baselines, improving rank discrimination. Distributional and spatial analyses indicate that the framework produces more informative and distinguishable municipality rankings, mitigating the concentration effects observed in current regulatory composite indicators.
 \end{abstract}
 
 \begin{keywords}
-	Learn to Rank, Graph Neural Networks, Pareto Dominance, Multi-Objective Optimization, Quality of Service
+    Learn to Rank, Graph Neural Networks, Pareto Dominance, Multi-Objective Optimization, Quality of Service
 \end{keywords}
 
 \section{Introduction}
@@ -135,7 +135,7 @@ For our analysis, we derive monthly estimates aggregated at the
 municipality level by averaging across providers, both composites 
 linearly combining $\mathrm{IND}_1$ through $\mathrm{IND}_8$.
 The legacy composite $\iqsleg = \sum_{k=1}^{K} w_k^{\mathrm{leg}}\,\mathrm{IND}_k$, in use since November 2021, uses fixed weights $w^{\mathrm{leg}} = (0.1, 0.1, 0.1, 0.2, 0.1, 0.1, 0.1, 0.2)$, assigning 
-greater relevance to $\mathrm{IND}_4$ and $\mathrm{IND}_8$.
+greater relevance to $\mathrm{IND}_4$ and $\mathrm{IND}_8$ \cite{anatel2021ri71}.
 The revised composite $\iqsrev$, replacing the legacy since June 2025, 
 adopts a performance-dependent scheme: indicators are ranked from worst 
 to best within each municipality--period and assigned the inverse-harmonic weight 
@@ -143,7 +143,7 @@ $\alpha_r = 1/(r\,H_K)$, where $H_K = \sum_{j=1}^{K}1/j$, so that
 $\iqsrev = \sum_{r=1}^{K} \alpha_r\cdot\mathrm{IND}_{\pi(r)} + B_{\mathrm{cov}}$,
 with $\pi$ ordering indicators from worst to best and $B_{\mathrm{cov}}$ 
 a five-point bonus awarded when 4G or higher coverage reaches at least 
-95\% in the urban area.
+95\% in the urban area \cite{anatel2025ri444}.
 
 \section{Methodology} \label{sec:methodology}
 
@@ -212,7 +212,7 @@ direction for training in the absence of labeled rankings.
 
 \subsection{Graph Construction and Relational Structure}
 
-A directed \gls{knn} graph $\mathcal{G} = (\mathcal{V}, \mathcal{E})$ is constructed over the preprocessed feature space $\Xmodel$, where each node $v_i \in \mathcal{V}$ represents a municipality--period entity and edges encode feature-space proximity between entities.
+A directed \gls{knn} graph $\mathcal{G} = (\mathcal{V}, \mathcal{E})$ is constructed over the preprocessed feature space $\Xmodel$. Each municipality--period is represented by a node $v_i \in \mathcal{V}$, and edges encode feature-space proximity between entities.
 
 The graph is constructed using \gls{knn} on $\Xmodel$ with a Minkowski distance metric, yielding an index matrix $\mathcal{I} \in \{1,\ldots,N\}^{N \times k}$ where each row $\mathcal{I}_{i,:}$ is the neighbor list for node $i$. The resulting graph is directed: edges are generated as $(i \rightarrow j)$ for each $j \in \mathcal{I}_{i,:}$.
 
@@ -240,12 +240,12 @@ with each subsequent layer computed as
 \noindent
 where $\phi$ is a learnable linear transformation, $\mathrm{AGG}$ is a permutation-invariant aggregator (mean pooling), and $\psi$ combines the aggregated messages with the node's current state through a learnable affine transformation followed by a non-linear activation~\cite{amara2025multiview}.
 
-The proposed ranking framework network uses Residual Graph Convolutional (ResGCN) blocks for $\psi$, incorporating skip-connections in the spirit of the original residual learning paradigm~\cite{he2016deep,scholkemper2025residual}. Given the node feature matrix $X \in \mathbb{R}^{n \times d_{in}}$ for a subgraph with $n$ nodes and edge list in COO format, each ResGCN layer computes
+The proposed ranking framework uses Residual Graph Convolutional (ResGCN) blocks for $\psi$, incorporating skip-connections following the original residual learning paradigm~\cite{he2016deep,scholkemper2025residual}. Given the node feature matrix $X \in \mathbb{R}^{n \times d_{in}}$ for a subgraph with $n$ nodes and edge list in COO format, each ResGCN layer computes
 \begin{equation}
-	\begin{aligned}
-	    H &= X W_{\mathrm{proj}}^\top + b_{\mathrm{proj}}, \\
-	    \bar{H}_i &= \frac{\sum_{(j \to i) \in E} H_j}{\deg_i + \epsilon}, \\
-	    X^\prime &= \mathrm{GELU}\!\left(\bar{H} + \mathrm{skip}(X)\right),
+    \begin{aligned}
+        H &= X W_{\mathrm{proj}}^\top + b_{\mathrm{proj}}, \\
+        \bar{H}_i &= \frac{\sum_{(j \to i) \in E} H_j}{\deg_i + \epsilon}, \\
+        X^\prime &= \mathrm{GELU}\!\left(\bar{H} + \mathrm{skip}(X)\right),
     \end{aligned}
 \end{equation}
 
@@ -313,10 +313,10 @@ preserving meaningful score variation across the distribution.
 We evaluate the proposed ranking framework against the regulatory baselines 
 using distributional and geographic analyses across 82{,}462 
 municipality--period observations. The legacy composite $\iqsleg$ 
-concentrates scores in a narrow band ($\sigma = 0.054$, IQR $= 0.028$), 
+concentrates scores in a narrow band ($\sigma = 0.054$, \gls{iqr} $= 0.028$), 
 and the revised $\iqsrev$ offers only marginal improvement ($\sigma = 0.058$, 
-IQR $= 0.028$). In contrast, the proposed score $\hat{r}$ achieves 
-$\sigma = 0.098$ and IQR $= 0.137$---a $1.8\times$ and nearly $5\times$ 
+\gls{iqr} $= 0.028$). In contrast, the proposed score $\hat{r}$ achieves 
+$\sigma = 0.098$ and \gls{iqr} $= 0.137$---a $1.8\times$ and nearly $5\times$ 
 expansion relative to $\iqsleg$, respectively---enabling finer rank 
 differentiation between municipalities with distinct performance profiles.
 
@@ -373,9 +373,9 @@ In contrast, the proposed model's score map reveals a clear North--South gradien
 
 \section{Conclusions} \label{sec:conclusions}
 
-While the analyzed \gls{anatel} composite indices exhibit pronounced score clustering that limits spatial and technical discrimination, this paper introduces a self-supervised, Pareto-guided ranking framework that significantly expands score discriminability across the municipality distribution, surpassing legacy and revised baselines in both spatial and technical separation through joint optimization of competing quality objectives.
+While the analyzed \gls{anatel} composite indices exhibit score clustering that limits spatial and technical discrimination, this paper introduces a self-supervised, Pareto-guided ranking framework that significantly expands score discriminability across the municipality distribution, surpassing legacy and revised baselines in both spatial and technical separation through joint optimization of competing quality objectives.
 
-By combining pairwise ranking, feature reconstruction, geometric smoothness, and a directional compass penalty, the model's optimization covers distinct, complementary dimensions, yielding a more balanced solution than that provided by one-dimensional scalar optimization. The quantitative analysis confirms the proposed score achieves an interquartile range of $0.137$, representing a nearly $5\times$ expansion compared to both baselines---IQR $= 0.028$ for $\iqsleg$ and IQR $= 0.028$ for $\iqsrev$---and a standard deviation $1.8$ times larger than the $\iqsleg$. External validation against the \gls{mhdi} further corroborates these findings: the proposed score correlates with the index at $\rho = 0.40$, exceeding the baselines' correlation by $0.07$ and $0.05$, indicating that the learned ranking captures socioeconomic structure beyond what the linear composites encode.
+By combining pairwise ranking, feature reconstruction, geometric smoothness, and a directional compass penalty, the model's optimization covers distinct, complementary dimensions, yielding a more balanced solution than that provided by one-dimensional scalar optimization. The quantitative analysis confirms the proposed score achieves an interquartile range of $0.137$, representing a nearly five times expansion compared to both baselines---\gls{iqr} $= 0.028$ for $\iqsleg$ and \gls{iqr} $= 0.028$ for $\iqsrev$---and a standard deviation $1.8$ times larger than the $\iqsleg$. External validation against the \gls{mhdi} further corroborates these findings: the proposed score correlates with the index at $\rho = 0.40$, exceeding the baselines' correlation by $0.07$ and $0.05$, indicating that the learned ranking captures socioeconomic structure beyond what the linear composites encode.
 
 Future work can benchmark the proposed approach against established learning-to-rank methods. Strengthening the external validation with additional extra-set covariates independent of telecommunications is also a planned direction. 
 Furthermore, the approach can also be extended to other socioeconomic domains. 
