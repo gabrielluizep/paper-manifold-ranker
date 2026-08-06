@@ -42,53 +42,52 @@
 \title{A GNN-Based Framework for Multi-Objective Telecommunications Quality Ranking}
 
 \author{Gabriel Luiz Espindola Pedro, Paulo Ricardo Branco da Silva, Dimas Irion
-    Alves, João Vitor Rosa  Negri, \\ Arthur Cadore Matuella Barcella, Renato
-    Machado, Kai de Andrade Lima, and Paulo Roberto Silva Marcos \thanks{Gabriel
-        Luiz Espindola Pedro, Paulo Ricardo Branco da Silva, Arthur Cadore Matuella
-        Barcella, João Vitor Rosa Negri, and Dimas Irion Alves are with
-        Telecommunications Department of Aeronautics Institute of Technology, São
-        José dos Campos, SP, Brazil, e-mails: \{gabrielluizep, dimasirion, negri,
-        pbranco, arthurcadore, rmachado\}@ita.br; Kai de Andrade Lima and Paulo
-        Roberto Silva Marcos are with Agência Nacional de Telecomunicações (ANATEL),
-        Brasília, Distrito Federal; e-mails: \{kai.lima, paulorsm\}@anatel.gov.br.
-        This study was financed in part by the Coordenação de Aperfeiçoamento de
-        Pessoal de Nível Superior - Brasil (CAPES) - Finance Code  001, Anatel under
-        Decentralized Execution Agreement (TED) No. 03/2023, Work Program:
-        24.722.2205.20ZD.0001, and São Paulo Research Foundation (FAPESP) under
-        grant 2020/09838-0 (BIOS---Brazilian Institute of Data Science).}%
+  Alves, João Vitor Rosa  Negri, \\ Arthur Cadore Matuella Barcella, Renato
+  Machado, Kai de Andrade Lima, and Paulo Roberto Silva Marcos \thanks{Gabriel
+    Luiz Espindola Pedro, Paulo Ricardo Branco da Silva, Arthur Cadore Matuella
+    Barcella, João Vitor Rosa Negri, and Dimas Irion Alves are with
+    Telecommunications Department of Aeronautics Institute of Technology, São
+    José dos Campos, SP, Brazil, e-mails: \{gabrielluizep, dimasirion, negri,
+    pbranco, arthurcadore, rmachado\}@ita.br; Kai de Andrade Lima and Paulo
+    Roberto Silva Marcos are with Agência Nacional de Telecomunicações (ANATEL),
+    Brasília, Distrito Federal; e-mails: \{kai.lima, paulorsm\}@anatel.gov.br.
+    This study was financed in part by the Coordenação de Aperfeiçoamento de
+    Pessoal de Nível Superior - Brasil (CAPES) - Finance Code  001, Anatel under
+    Decentralized Execution Agreement (TED) No. 03/2023, Work Program:
+    24.722.2205.20ZD.0001, and São Paulo Research Foundation (FAPESP) under
+  grant 2020/09838-0 (BIOS---Brazilian Institute of Data Science).}%
 }
 
 \maketitle
 
 \markboth{XLIV BRAZILIAN SYMPOSIUM ON TELECOMMUNICATIONS AND SIGNAL PROCESSING - SBrT 2026, SEPTEMBER 29--OCTOBER 02, 2026, SALVADOR, BA}{}
 
-
 \begin{abstract}
-    Assessing telecommunications mobile services quality across municipalities
-    with heterogeneous structural, geographic, and socioeconomic conditions
-    requires methodologies beyond simple scalar or functional aggregations. This
-    paper introduces a self-supervised Graph Neural Network (GNN) based ranking
-    framework that learns the geometry of municipality-level Quality of Service
-    (QoS) indicators on a $k$-nearest-neighbor graph, producing a unified
-    ranking obtained by self-supervised learning on Pareto-inspired proxies. The
-    architecture employs residual graph convolutional layers and is trained with
-    a multi-objective loss function that enforces pairwise ranking consistency,
-    input reconstruction fidelity, geometric smoothness on the learned manifold,
-    and directional alignment with a Pareto-inspired proxy. The approach is
-    validated on a dataset covering Brazilian municipalities over multiple
-    monthly periods, totaling over 82,000 municipality--month observations.
-    Results show that the proposed model produces scores with a wider effective
-    range ($\sigma=0.098$) than ANATEL's legacy QoS ($\sigma=0.054$) and its
-    revised version ($\sigma=0.058$) baselines, improving rank discrimination.
-    Distribution and spatial analyses suggest that the framework produces more
-    informative and distinguishable municipality rankings than the baselines,
-    mitigating the concentration effects observed in current regulatory
-    composite indicators.
+  Assessing telecommunications mobile services quality across municipalities
+  with heterogeneous structural, geographic, and socioeconomic conditions
+  requires methodologies beyond simple scalar or functional aggregations. This
+  paper introduces a self-supervised Graph Neural Network (GNN) based ranking
+  framework that learns the geometry of municipality-level Quality of Service
+  (QoS) indicators on a $k$-nearest-neighbor graph, producing a unified
+  ranking obtained by self-supervised learning on Pareto-inspired proxies. The
+  architecture employs residual graph convolutional layers and is trained with
+  a multi-objective loss function that enforces pairwise ranking consistency,
+  input reconstruction fidelity, geometric smoothness on the learned manifold,
+  and directional alignment with a Pareto-inspired proxy. The approach is
+  validated on a dataset covering Brazilian municipalities over multiple
+  monthly periods, totaling over 82,000 municipality--month observations.
+  Results show that the proposed model produces scores with a wider effective
+  range ($\sigma=0.098$) than ANATEL's legacy QoS ($\sigma=0.054$) and its
+  revised version ($\sigma=0.058$) baselines, improving rank discrimination.
+  Distribution and spatial analyses suggest that the framework produces more
+  informative and distinguishable municipality rankings than the baselines,
+  mitigating the concentration effects observed in current regulatory
+  composite indicators.
 \end{abstract}
 
 \begin{keywords}
-    Learn to Rank, Graph Neural Networks, Pareto Dominance, Multi-Objective
-    Optimization, Quality of Service
+  Learn to Rank, Graph Neural Networks, Pareto Dominance, Multi-Objective
+  Optimization, Quality of Service
 \end{keywords}
 
 \section{Introduction}
@@ -132,7 +131,7 @@ provider and semester~\cite{anatel2025ri444,anatel2021ri71}. This approach
 aligns with international practices and reflects a broader trend of deriving
 orderings from multidimensional \gls{qos} metrics via linear aggregation.
 However, such non-relational formulations may fail to capture the global
-structure of relative municipal performance. By ignoring dominance
+structure of relative municipal performance. By ignoring Pareto dominance
 relationships, scores become less discriminative, with similar entities assigned
 near-identical values. As detailed in Section~\ref{sec:results}, the legacy IQS
 concentrates 50\% of observations between 0.835 and 0.863, an interquartile
@@ -161,7 +160,7 @@ directions for future work.
 
 The dataset comprises mobile service \gls{qos} and \gls{qoe} indicators and
 infrastructure covariates provided by \gls{anatel}, creating a matrix $\Xraw \in
-    \mathbb{R}^{N \times D}$, where $N$ corresponds to the number of
+\mathbb{R}^{N \times D}$, where $N$ corresponds to the number of
 municipality--period entities and $D$ corresponds to the number of features. The
 matrix $\Xraw$ is indexed by two keys: \textit{month}, which identifies the
 observation period, and a unique \textit{municipality identifier}. Each row,
@@ -185,7 +184,7 @@ $\mathrm{IBC}$ (Brazilian Coverage Index).
 
 To establish a baseline comparison, we adopt the two \gls{iqs} composite
 scores\footnote{The \gls{iqs} (Índice de Qualidade do Serviço) is referred to by
-    \gls{anatel} as the official \gls{qos} composite indicator.}. The \gls{iqs} is
+\gls{anatel} as the official \gls{qos} composite indicator.}. The \gls{iqs} is
 officially published on a semi-annual basis, indexed by provider and
 municipality, with the primary objective of monitoring and evaluating
 telecommunications service quality in Brazil through a transparent and
@@ -194,15 +193,15 @@ performance~\cite{anatel2025ri444,anatel2021ri71}.
 
 For our analysis, we derive monthly estimates aggregated at the municipality
 level by averaging across providers. The legacy composite $\iqsleg =
-    \sum_{k=1}^{K} w_k^{\mathrm{leg}}\,\mathrm{IND}_k$, in use since November 2021,
+\sum_{k=1}^{K} w_k^{\mathrm{leg}}\,\mathrm{IND}_k$, in use since November 2021,
 uses fixed weights $w^{\mathrm{leg}} = (0.1, 0.1, 0.1, 0.2, 0.1, 0.1, 0.1,
-    0.2)$, assigning greater relevance to $\mathrm{IND}_4$ and $\mathrm{IND}_8$
+0.2)$, assigning greater relevance to $\mathrm{IND}_4$ and $\mathrm{IND}_8$
 \cite{anatel2021ri71}. The revised composite $\iqsrev$, replacing the legacy
 since June 2025, adopts a performance-dependent scheme: indicators are ranked
 from worst to best within each municipality--period and assigned the
 inverse-harmonic weight $\alpha_r = 1/(r\,H_K)$, where $H_K =
-    \sum_{j=1}^{K}1/j$, so that $\iqsrev = \sum_{r=1}^{K}
-    \alpha_r\cdot\mathrm{IND}_{\pi(r)} + B_{\mathrm{cov}}$, with $\pi$ consisting in
+\sum_{j=1}^{K}1/j$, so that $\iqsrev = \sum_{r=1}^{K}
+\alpha_r\cdot\mathrm{IND}_{\pi(r)} + B_{\mathrm{cov}}$, with $\pi$ consisting in
 a permutation that orders indicators from worst to best and $B_{\mathrm{cov}}$
 consisting in a five-point bonus awarded when 4G or higher coverage reaches at
 least 95\% in the urban area \cite{anatel2025ri444}.
@@ -210,7 +209,7 @@ least 95\% in the urban area \cite{anatel2025ri444}.
 \section{Methodology} \label{sec:methodology}
 
 The proposed ranking framework transforms raw municipality indicators into a
-scalar ranking score through pairwise dominance-guided learning on a
+scalar ranking score through pairwise Pareto dominance-guided learning on a
 graph-structured representation. The pipeline comprises four stages:
 preprocessing of raw indicators, detailed in Section~\ref{sec:preproc}; graph
 construction in Section~\ref{sec:graph}; positional encoding in
@@ -232,44 +231,44 @@ $Q_{0.95} - Q_{0.05}$, which is more resilient to outliers than the full range.
 Standard Scaling is then applied sequentially to yield $\Xmodel$ with zero mean
 and unit variance, ensuring that no single feature dominates gradient updates.
 In parallel, Min-Max scaling on $\Xlog$ produces $\Xpareto \in [0,1]^{N \times
-        D}$, from which a scalar surrogate utility $u_i$ is derived as the feature-wise
+D}$, from which a scalar surrogate utility $u_i$ is derived as the feature-wise
 mean; since all features are normalized to $[0,1]$ and oriented so that higher
 values denote better performance, this average provides a consistent monotone
 direction for training in the absence of labeled rankings.
 
 \begin{algorithm}
-    \caption{Preprocessing Pipeline}
-    \label{alg:preprocessing}
-    \begin{algorithmic}[1]
-        \Require $\Xraw \in \mathbb{R}^{N \times D}$, raw indicator matrix
-        \State $\Xlog \gets \log(1 + \Xraw)$
-        \Comment{Log1p Transform}
-        \For{each feature $j = 1, \ldots, D$}
-        \State $\tilde{x}_{:,j} \gets
-            \dfrac{\xlog_{:,j} - \mathrm{median}(\xlog_{:,j})}
-            {Q_{0.95}(\xlog_{:,j}) - Q_{0.05}(\xlog_{:,j})}$
-        \Comment{Robust Scaling}
-        \EndFor
-        \For{each feature $j = 1, \ldots, D$}
-        \State $\Xmodel_{:,j} \gets
-            \dfrac{\tilde{x}_{:,j} - \mathrm{mean}(\tilde{x}_{:,j})}
-            {\mathrm{std}(\tilde{x}_{:,j})}$
-        \Comment{Standard Scaling}
-        \EndFor
-        \For{each feature $j = 1, \ldots, D$}
-        \State $\Xpareto_{:,j} \gets
-            \dfrac{\xlog_{:,j} - \min_i \xlog_{i,j}}
-            {\max_i \xlog_{i,j} - \min_i \xlog_{i,j}}$
-        \Comment{Pareto Proxy (Min-Max on $\Xlog$)}
-        \EndFor
-        \For{each entity $i = 1, \ldots, N$}
-        \State $u_i \gets \frac{1}{D}\sum_j \Xpareto_{i,j}$
-        \EndFor
-        \Ensure $\Xmodel \in \mathbb{R}^{N \times D}$ (model input),\;
-        $\Xpareto \in [0,1]^{N \times D}$,\;
-        $u_i \in [0,1]$ (ranking surrogate)
-    \end{algorithmic}
-    \vspace{-1.5em}
+  \caption{Preprocessing Pipeline}
+  \label{alg:preprocessing}
+  \begin{algorithmic}[1]
+    \Require $\Xraw \in \mathbb{R}^{N \times D}$, raw indicator matrix
+    \State $\Xlog \gets \log(1 + \Xraw)$
+    \Comment{Log1p Transform}
+    \For{each feature $j = 1, \ldots, D$}
+    \State $\tilde{x}_{:,j} \gets
+    \dfrac{\xlog_{:,j} - \mathrm{median}(\xlog_{:,j})}
+    {Q_{0.95}(\xlog_{:,j}) - Q_{0.05}(\xlog_{:,j})}$
+    \Comment{Robust Scaling}
+    \EndFor
+    \For{each feature $j = 1, \ldots, D$}
+    \State $\Xmodel_{:,j} \gets
+    \dfrac{\tilde{x}_{:,j} - \mathrm{mean}(\tilde{x}_{:,j})}
+    {\mathrm{std}(\tilde{x}_{:,j})}$
+    \Comment{Standard Scaling}
+    \EndFor
+    \For{each feature $j = 1, \ldots, D$}
+    \State $\Xpareto_{:,j} \gets
+    \dfrac{\xlog_{:,j} - \min_i \xlog_{i,j}}
+    {\max_i \xlog_{i,j} - \min_i \xlog_{i,j}}$
+    \Comment{Pareto Proxy (Min-Max on $\Xlog$)}
+    \EndFor
+    \For{each entity $i = 1, \ldots, N$}
+    \State $u_i \gets \frac{1}{D}\sum_j \Xpareto_{i,j}$
+    \EndFor
+    \Ensure $\Xmodel \in \mathbb{R}^{N \times D}$ (model input),\;
+    $\Xpareto \in [0,1]^{N \times D}$,\;
+    $u_i \in [0,1]$ (ranking surrogate)
+  \end{algorithmic}
+  \vspace{-1.5em}
 \end{algorithm}
 
 \subsection{Graph Construction and Relational Structure} \label{sec:graph}
@@ -280,7 +279,7 @@ is the set of nodes and $\mathcal{E}$ the set of directed edges. Each
 municipality--period is represented by a node $v_i \in \mathcal{V}$, and edges
 encode feature-space proximity between entities.
 
-The graph is constructed using \gls{knn} on $\Xmodel$ with a Minkowski distance
+The graph is constructed using \gls{knn} on $\Xmodel$ with $k=15$ and Euclidean distance
 metric, yielding a neighbor matrix $\mathcal{I} \in \{1,\ldots,N\}^{N \times k}$
 where each row $\mathcal{I}_{i,:}$ lists the $k$ nearest neighbors of node $i$.
 The resulting graph is directed: edges $(i \rightarrow j)$ are generated for
@@ -317,14 +316,14 @@ $\ell$, a node representation $h_i^{(\ell)}$ is updated by aggregating features
 from its neighbors via
 
 \begin{equation}
-    m_i^{(\ell)} = \mathrm{AGG}
-    \left(\left\{
-    \phi\left(h_j^{(\ell)}\right):(j\rightarrow i) \in E
-    \right\}\right),
+  m_i^{(\ell)} = \mathrm{AGG}
+  \left(\left\{
+      \phi\left(h_j^{(\ell)}\right):(j\rightarrow i) \in E
+  \right\}\right),
 \end{equation}
 with each subsequent layer computed as
 \begin{equation}
-    h_i^{(\ell+1)} = \psi\left(h_i^{(\ell)},m_i^{(\ell)}\right),
+  h_i^{(\ell+1)} = \psi\left(h_i^{(\ell)},m_i^{(\ell)}\right),
 \end{equation}
 
 \noindent
@@ -341,16 +340,16 @@ $n$ nodes and $d_{\text{in}}$ input features, with the edge list stored in COO
 (Coordinate) format as source--target index arrays, each ResGCN layer computes
 
 \begin{equation}
-    \begin{aligned}
-        H         & = X W_{\mathrm{proj}}^\top + b_{\mathrm{proj}},           \\
-        \bar{H}_i & = \frac{\sum_{(j \to i) \in E} H_j}{\deg_i + \epsilon},   \\
-        X^\prime  & = \mathrm{GELU}\!\left(\bar{H} + \mathrm{skip}(X)\right),
-    \end{aligned}
+  \begin{aligned}
+    H         & = X W_{\mathrm{proj}}^\top + b_{\mathrm{proj}},           \\
+    \bar{H}_i & = \frac{\sum_{(j \to i) \in E} H_j}{\deg_i + \epsilon},   \\
+    X^\prime  & = \mathrm{GELU}\!\left(\bar{H} + \mathrm{skip}(X)\right),
+  \end{aligned}
 \end{equation}
 
 \noindent
 where $W_{\mathrm{proj}}$ and $b_{\mathrm{proj}}$ are learnable weights and
-bias, $\deg_i$ is the in-degree of node $i$, and $\epsilon$ is a small stability
+biases, $\deg_i$ is the in-degree of node $i$, and $\epsilon$ is a small stability
 constant. The skip path is the identity when dimensions match or a linear
 projection otherwise; this residual structure shortens gradient paths, improving
 trainability and mitigating oversmoothing---the convergence of node
@@ -359,7 +358,7 @@ aggregation~\cite{scholkemper2025residual,akansha2025oversquashing}.
 
 Due to the rapid computational growth associated with neighborhood scaling,
 bounded graph subsampling via breadth-first search with neighbor downsampling is
-employed. At each hop, neighbor lists are randomly subsampled to a fixed limit,
+employed. At each hop, neighbor lists are randomly subsampled to a fixed limit of 5,
 and a hard cap on the total number of nodes is enforced. This enables
 memory-efficient training by transferring only small induced subgraphs to the
 processing device at each step, at the cost of reduced long-range message
@@ -389,21 +388,17 @@ complementary perspectives, yielding a scalarized solution more balanced and
 robust than one-dimensional optimization
 
 \begin{equation}
-    \begin{aligned}
-        \mathcal{L} & =
-        \lambda_\mathrm{comp} \mathcal{L}_\mathrm{comp} +
-        \lambda_\mathrm{recon} \mathcal{L}_\mathrm{recon} \\
-                    & +
-        \lambda_\mathrm{rank} \mathcal{L}_\mathrm{rank} +
-        \lambda_\mathrm{geo} \mathcal{L}_\mathrm{geo},
-    \end{aligned}
+  \begin{aligned}
+    \mathcal{L} &= \lambda_\mathrm{comp} \mathcal{L}_\mathrm{comp} + \lambda_\mathrm{recon} \mathcal{L}_\mathrm{recon} \\
+    &\quad + \lambda_\mathrm{rank} \mathcal{L}_\mathrm{rank} + \lambda_\mathrm{geo} \mathcal{L}_\mathrm{geo},
+  \end{aligned}
 \end{equation}
 
 The Compass Loss $\mathcal{L}_\mathrm{comp}$ aligns model scores with the proxy
 $u_i$, providing a monotone directional signal during training
 
 \begin{equation}
-    \mathcal{L}_{\mathrm{comp}} = \frac{1}{|B|} \sum_{i \in B} (s_i - u_i)^2.
+  \mathcal{L}_{\mathrm{comp}} = \frac{1}{|B|} \sum_{i \in B} (s_i - u_i)^2.
 \end{equation}
 
 \noindent
@@ -414,8 +409,8 @@ ability to recover the original standardized features, enforcing information
 preservation
 
 \begin{equation}
-    \mathcal{L}_{\mathrm{recon}}
-    = \frac{1}{|B|} \sum_{i \in B} \|\mathbf{\hat{x}}_i - \xmodel_i\|_2^2.
+  \mathcal{L}_{\mathrm{recon}}
+  = \frac{1}{|B|} \sum_{i \in B} \|\mathbf{\hat{x}}_i - \xmodel_i\|_2^2.
 \end{equation}
 
 The Pairwise Ranking Loss $\mathcal{L}_\mathrm{rank}$ establishes ordering
@@ -428,12 +423,13 @@ label $y = \mathrm{sign}(u_A - u_B)$, where $u_A$ and $u_B$ are the proxy
 utility values of municipalities $A$ and $B$, respectively, we have that
 
 \begin{equation}
-    \mathcal{L}_{\mathrm{rank}}
-    = \frac{1}{|P|} \sum_{(A,B) \in P} \max(0, m - y(s_A - s_B)),
+  \mathcal{L}_{\mathrm{rank}}
+  = \frac{1}{|P|} \sum_{(A,B) \in P} \max(0, m - y(s_A - s_B)),
 \end{equation}
 
 \noindent
-where the margin $m$ serves a dual purpose: it demands a minimum score
+where the margin $m=0{.}1$ serves a dual purpose:
+it demands a minimum score
 separation between pairs ordered by the proxy, and it suppresses the
 contribution of pairs whose proxy difference $|u_A - u_B|$ is small---and
 therefore potentially unreliable---by allowing the loss to reach zero before
@@ -447,10 +443,10 @@ edges, following the discrete Dirichlet energy---the sum of squared signal
 differences along all edges---on the graph
 
 \begin{equation}
-    \label{eq:l_geo}
-    \mathcal{L}_{\mathrm{geo}}
-    =  \frac{1}{|E_{\mathrm{sub}}|}
-    \sum_{(i,j) \in E_{\mathrm{sub}}} (s_i - s_j)^2,
+  \label{eq:l_geo}
+  \mathcal{L}_{\mathrm{geo}}
+  =  \frac{1}{|E_{\mathrm{sub}}|}
+  \sum_{(i,j) \in E_{\mathrm{sub}}} (s_i - s_j)^2,
 \end{equation}
 
 \noindent
@@ -468,7 +464,7 @@ observations. The legacy composite $\iqsleg$ concentrates scores in a narrow
 band ($\sigma = 0.054$, \gls{iqr} $= 0.028$), and the revised $\iqsrev$ offers
 only marginal improvement ($\sigma = 0.058$, \gls{iqr} $= 0.028$). In contrast,
 the proposed score $\hat{r}$ achieves $\sigma = 0.098$ and \gls{iqr} $=
-    0.137$---a 1.8 times and nearly five times expansion relative to $\iqsleg$,
+0.137$---a 1.8 times and nearly five times expansion relative to $\iqsleg$,
 respectively---enabling finer municipality rank differentiation with distinct
 performance profiles.
 
@@ -492,11 +488,11 @@ features---exceeding the baselines by $0.07$ and $0.05$, indicating that the
 model captures socioeconomic structure not encoded in the linear composites.
 
 \begin{figure}[t]
-    \centering
-    \includegraphics[width=1\linewidth]{figures/hist.pdf}
-    \caption{Comparison between score and baseline distributions.}
-    \label{fig:hist}
-    \vspace{-1.5em}
+  \centering
+  \includegraphics[width=1\linewidth]{figures/hist.pdf}
+  \caption{Comparison between score and baseline distributions.}
+  \label{fig:hist}
+  \vspace{-1.5em}
 \end{figure}
 
 To spatially validate the framework, we selected December 2022 for evaluation,
@@ -536,38 +532,38 @@ are clearly visible against their surrounding rural areas, a distinction that
 the baselines' compressed ranges cannot render.
 
 \begin{figure}[t]
+  \centering
+  \begin{subfigure}[b]{0.24\textwidth}
     \centering
-    \begin{subfigure}[b]{0.24\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{figures/map_score.pdf}
-        \caption{$\hat{r}$}
-        \label{fig:map_s}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.24\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{figures/map_idhm.pdf}
-        \caption{MHDI}
-        \label{fig:map_mdhi}
-    \end{subfigure}
-    \vfill
-    \begin{subfigure}[b]{0.24\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{figures/map_iqs_leg_div.pdf}
-        \caption{$\iqsleg$}
-        \label{fig:map_iqs_leg}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.24\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{figures/map_iqs_rev_div.pdf}
-        \caption{$\iqsrev$}
-        \label{fig:map_iqs_ev}
-    \end{subfigure}
+    \includegraphics[width=\textwidth]{figures/map_score.pdf}
+    \caption{$\hat{r}$}
+    \label{fig:map_s}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.24\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/map_idhm.pdf}
+    \caption{MHDI}
+    \label{fig:map_mdhi}
+  \end{subfigure}
+  \vfill
+  \begin{subfigure}[b]{0.24\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/map_iqs_leg_div.pdf}
+    \caption{$\iqsleg$}
+    \label{fig:map_iqs_leg}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.24\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/map_iqs_rev_div.pdf}
+    \caption{$\iqsrev$}
+    \label{fig:map_iqs_ev}
+  \end{subfigure}
 
-    \caption{Geographic distribution of analysed variables for December 2022.}
-    \label{fig:mps}
-    \vspace{-1.5em}
+  \caption{Geographic distribution of analysed variables for December 2022.}
+  \label{fig:mps}
+  \vspace{-1.5em}
 \end{figure}
 
 \section{Conclusion} \label{sec:conclusions}
